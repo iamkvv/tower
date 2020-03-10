@@ -1,0 +1,30 @@
+{
+  "name": "render",
+  "version": "1.0.0",
+  "description": "Describe render here",
+  "private": true,
+  "scripts": {
+    "build": "nwb build-react-app",
+    "clean": "nwb clean-app",
+    "start": "nwb serve-react-app",
+    "test": "nwb test-react",
+    "test:coverage": "nwb test-react --coverage",
+    "test:watch": "nwb test-react --server"
+  },
+  "dependencies": {
+    "animejs": "^3.1.0",
+    "chroma-js": "^2.1.0",
+    "fela": "^11.1.2",
+    "react": "^16.13.0",
+    "react-dnd": "^10.0.2",
+    "react-dnd-html5-backend": "^10.0.2",
+    "react-dom": "^16.13.0",
+    "react-fela": "^11.1.2"
+  },
+  "devDependencies": {
+    "nwb": "0.23.x"
+  },
+  "author": "",
+  "license": "MIT",
+  "repository": ""
+}
