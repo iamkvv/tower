@@ -8,16 +8,23 @@ class Board extends Component {
     super(props);
     this.diskRefs = {};
     this.boardRef = null;
+    this.DnDrefs = {};
 
-    this.setDiskRefs = (el, obj) => {
-      //чистим пустые ref'ы (образуются после уменьшения кол-ва дисков)
-      // и передаем непустые в Parent
-      for (const k of Object.keys(this.diskRefs)) {
-        if (this.diskRefs[k] === null) delete this.diskRefs[k]
-      }
-
-      this.diskRefs = Object.assign({}, this.diskRefs, { [obj.idx]: el });
+    this.setDnDrefs = (ref_d, idx) => {
+      console.log("setDnDrefs", ref_d, this.diskRefs)
+      this.diskRefs = Object.assign(this.diskRefs, { [idx]: ref_d });
     }
+
+
+    //   this.setDiskRefs = (el, obj) => {
+    //     //чистим пустые ref'ы (образуются после уменьшения кол-ва дисков)
+    //     // и передаем непустые в Parent
+    //     for (const k of Object.keys(this.diskRefs)) {
+    //       if (this.diskRefs[k] === null) delete this.diskRefs[k]
+    //     }
+
+    //     this.diskRefs = Object.assign({}, this.diskRefs, { [obj.idx]: el });
+    //   }
 
     this.setBoardRef = (el) => {
       this.boardRef = el;
@@ -52,6 +59,8 @@ class Board extends Component {
           })
         }
 
+
+
         {
           disks.map(e => (
             <Disk color={e.color}
@@ -59,9 +68,10 @@ class Board extends Component {
               gridArea={`${e.rowStart}/${e.colStart}/${e.rowEnd}/${e.colEnd}`}
               disks={disks}
               idx={e.idx}
-              ref={(el, obj) => this.setDiskRefs(el, e)}
+              // ref={(el, obj) => this.setDiskRefs(el, e)}
               key={e.idx}
               changePlaceOndrop={this.props.changePlaceOndrop}
+              setDnDrefs={this.setDnDrefs}
             />
 
           ))
