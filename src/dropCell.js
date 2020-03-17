@@ -1,10 +1,13 @@
 import React, { useContext } from 'react'
-import { ItemTypes } from './dndTypes';
+import { ItemTypes } from './constants';
 import { useDrop } from 'react-dnd'
-import { BoardContext } from './boardProvider'
 
-function DropCell({ row, col }) {//, disks }) {
-    const { state, dispatch } = useContext(BoardContext);
+//import { GameContext } from './hanoi-tower'
+import { GameContext } from './gameProvider'
+
+function DropCell({ row, col }) {
+    const { state, dispatch } = useContext(GameContext);
+    const { disks } = state;
 
     const [{ isOver }, dropRef] = useDrop({
         accept: ItemTypes.DISK,
@@ -14,15 +17,15 @@ function DropCell({ row, col }) {//, disks }) {
         },
 
         canDrop: (item, monitor) => {
-            let disksInCol = Object.values(state.disks).filter(d => d.colStart === col);
+            let disksInCol = Object.values(disks).filter(d => d.colStart === col);
 
             if (disksInCol.length == 0) {
-                if ((Object.values(state.disks).length - disksInCol.length - row == 0)) {
+                if ((Object.values(disks).length - disksInCol.length - row == 0)) {
                     return true
                 }
             } else {
                 let minSizeDisk = Math.min(...disksInCol.map(d => d.idx))
-                if ((item.idx < minSizeDisk) && (Object.values(state.disks).length - disksInCol.length - row == 0)) {
+                if ((item.idx < minSizeDisk) && (Object.values(disks).length - disksInCol.length - row == 0)) {
                     return true
                 }
             }

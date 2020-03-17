@@ -1,11 +1,12 @@
 import React, { useRef, useEffect, useContext } from 'react'
-import { ItemTypes } from './dndTypes';
+import { ItemTypes, Actions } from './constants';
 import { useDrag } from 'react-dnd';
 
-import { BoardContext } from './boardProvider'
+//import { GameContext } from './hanoi-tower'
+import { GameContext } from './gameProvider'
 
 const Disk = (props) => {
-    const { state, dispatch } = useContext(BoardContext);
+    const { state, dispatch } = useContext(GameContext);
     const { disks } = state;
 
     //https://github.com/facebook/react/issues/13029
@@ -42,7 +43,7 @@ const Disk = (props) => {
                 currDisk.rowEnd = result.dropRow + 1;
                 currDisk.colEnd = result.dropCol + 1
 
-                dispatch({ type: 'change', arr: disks })// Исправить имена
+                dispatch({ type: Actions.UPDATEDISK, disks: disks })// Исправить имена
             }
         }
     })

@@ -12,14 +12,13 @@
     "test:watch": "nwb test-react --server"
   },
   "dependencies": {
+    "@material-ui/core": "^4.9.5",
     "animejs": "^3.1.0",
     "chroma-js": "^2.1.0",
-    "fela": "^11.1.2",
     "react": "^16.13.0",
     "react-dnd": "^10.0.2",
     "react-dnd-html5-backend": "^10.0.2",
-    "react-dom": "^16.13.0",
-    "react-fela": "^11.1.2"
+    "react-dom": "^16.13.0"
   },
   "devDependencies": {
     "nwb": "0.23.x"
