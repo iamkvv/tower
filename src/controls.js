@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const Controls = ({ startGame, stopGame }) => {
+const Controls = () => {
     const { state, dispatch } = useContext(GameContext);
     const { disks, gameActive } = state;
 
@@ -56,7 +56,6 @@ const Controls = ({ startGame, stopGame }) => {
     // }, [state.gameActive]);//или []
 
     const onClickStart = () => {
-        window.gameActive = "active"
         dispatch({ type: Actions.GAMEACTIVE });
     }// startGame(); }
 
@@ -70,6 +69,14 @@ const Controls = ({ startGame, stopGame }) => {
             dispatch({ type: Actions.GAMENEW });
         }, 1000);
     }
+
+    const onClickTest = () => {
+        //dispatch({ type: Actions.GAMEACTIVE });
+        console.log(state.disks)
+        debugger
+    }// startGame(); }
+
+
 
     return (<div className='controls'>
         {state.disks.length}{state.gameActive.toString()}
@@ -118,8 +125,8 @@ const Controls = ({ startGame, stopGame }) => {
             />
         </p> */}
         <p style={{ fontFamily: 'Roboto, sans-serif' }}>
-            <button onClick={() => onClickStart()}>
-                Start
+            <button onClick={() => onClickTest()}>
+                Test
             </button>
         </p>
 

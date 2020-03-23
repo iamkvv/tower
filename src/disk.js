@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useContext } from 'react'
 import { ItemTypes, Actions } from './constants';
 import { useDrag } from 'react-dnd';
 
-//import { GameContext } from './hanoi-tower'
 import { GameContext } from './gameProvider'
 
 const Disk = (props) => {
@@ -17,7 +16,7 @@ const Disk = (props) => {
                 ddref(diskRef.current);
                 Object.values(disks)[props.idx].ref = diskRef.current
             }
-        })// ddref   ???зачем??, [refs]);
+        })
         return diskRef;
     }
 
@@ -37,13 +36,13 @@ const Disk = (props) => {
             //получаем {dropEffect: "move", dropRow: 3, dropCol: 2, sourceIdx: 0} т.е. на что изменить и кому
             let result = monitor.getDropResult()
             if (result) {
-                let currDisk = disks[result.sourceIdx]//   result.sourceIdx]
+                let currDisk = disks[result.sourceIdx]
                 currDisk.rowStart = result.dropRow;
                 currDisk.colStart = result.dropCol;
                 currDisk.rowEnd = result.dropRow + 1;
                 currDisk.colEnd = result.dropCol + 1
 
-                dispatch({ type: Actions.UPDATEDISK, disks: disks })// Исправить имена
+                dispatch({ type: Actions.UPDATEDISK, disks: disks })
             }
         }
     })

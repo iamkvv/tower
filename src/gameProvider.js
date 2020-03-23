@@ -60,7 +60,6 @@ const GameProvider = () => {
     useEffect(() => {
         //dispatch({ type: 'TEST', boardref: 'node' })
         //     //  return () => {
-        console.log("use effect provider", state)
         if (state.gameNew) {
             dispatch({ type: Actions.DISKCOUNT, count: Object.keys(state.disks).length })
         }

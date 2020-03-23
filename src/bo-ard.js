@@ -1,11 +1,10 @@
 import React, { useContext, useCallback, useEffect } from 'react'
 
-//import { GameContext } from './hanoi-tower'
 import { GameContext } from './gameProvider'
 
-import { renderDropCells, renderDisks } from './helper'
+import { renderDropCells, renderDisks, renderPegs } from './helper'
 import { Actions } from './constants'
-
+import Peg from './peg'
 
 const Board = () => {
     const { state, dispatch } = useContext(GameContext);
@@ -22,11 +21,12 @@ const Board = () => {
     ////
 
     useEffect(() => {
-        //dispatch({ type: 'TEST', boardref: 'node' })
-        //     //  return () => {
-        // console.log("use effect board", state)
-        //     // dispatch({ type: 'START-GAME', startGame: sg })
-    })//или []
+        // debugger
+        //     dispatch({ type: 'TEST', boardref: 'node' })
+        //     //     //     //  return () => {
+        console.log("use effect board", state)
+        //     //     //     // dispatch({ type: 'START-GAME', startGame: sg })
+    }, [state.disks])//или []
 
 
     return (
@@ -39,6 +39,7 @@ const Board = () => {
         >
             {renderDropCells(Object.keys(disks).length)}
             {renderDisks(disks)}
+            {renderPegs()}
         </div>
     )
 }

@@ -1,8 +1,19 @@
 import React from 'react'
+
 import DropCell from './dropCell'
 import Disk from './disk'
+import Peg from './peg'
 
 import chroma from 'chroma-js'
+
+// const dropCellStyle = makeStyles({
+//     ddcell: {
+//         gridArea: data => (`${data.row}/${data.col}/${data.row + 1}/${data.col + 1}`),
+//         width: '100%',
+//         height: '100%',
+//     }
+// })
+
 
 export const createDisks = (qnt) => {
     let disksData = [];
@@ -56,7 +67,7 @@ export const buildMoves = (k) => { //строит массив ходов для
         .map(d => ({ disk: parseInt(d[0]), from: d[1], to: d[2] }))
 };
 
-export const renderDropCells = (diskCount) => {//?to helper
+export const renderDropCells = (diskCount) => {
     let r, c = 0;
     return new Array(diskCount * 3)
         .fill(null, 0, diskCount * 3)
@@ -64,6 +75,7 @@ export const renderDropCells = (diskCount) => {//?to helper
             if (!(i % (diskCount))) { r = 0; c++; } r++
             return (
                 <DropCell
+                    // className={ddStyle.ddcell}
                     key={'c' + i}
                     row={r}
                     col={c} />)
@@ -79,4 +91,13 @@ export const renderDisks = (disks) => {
             key={'d' + disks[id].idx}
         />
     ))
+}
+
+export const renderPegs = () => {
+    let k = 1; let arr = ['A', 'B', 'C']
+    // return new Array(3) как затащить БУКВУ в :before ???
+    //   .fill(null, 0, 3)
+    return arr.map((d, i) => {
+        return (<Peg l={arr[i]} k={(k * i * 2) + 1} />)
+    })
 }
