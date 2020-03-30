@@ -1,193 +1,175 @@
-import React, { useContext, useEffect, useRef, useLayoutEffect } from 'react'
-import anime from 'animejs/lib/anime.es.js'
+import React, { useReducer, forwardRef, useContext, useEffect, useRef, useLayoutEffect, useCallback, useMemo } from 'react'
+//import anime from 'animejs/lib/anime.es.js'
 
 import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
 
-import { GameContext } from './gameProvider'
+//import { GameContext } from './gameProvider'
 import { Actions } from './constants'
 import { buildMoves } from './helper'
 import Board from './bo-ard'
+
+import HTBoard from './htboard'
+
 import Controls from './controls'
 
 import Mover from './mover'
 
 import './App.css'
 
+const GameContext = React.createContext();
+
+function reducer(state, action) {
+    switch (action.type) {
+
+        case Actions.DISKCOUNT:
+            return Object.assign({}, state, { diskCount: action.diskcount });
+
+        case Actions.DISKMOVED:
+            return Object.assign({}, state, { moveCount: state.moveCount + 1 });
+
+
+
+
+
+        // case Actions.DISKREF:
+        //     return Object.assign({}, state, state.diskRefs[action.diskref.idx] = action.diskref.ref);
+
+        case Actions.BOARDREF:
+            return Object.assign({}, state, { boardRef: action.boardref });
+
+        case Actions.GAMESTARTED:
+            return Object.assign({}, state, { gameStarted: !state.gameStarted });
+
+        case Actions.GAMESTOPPED:
+            return Object.assign({}, state, { gameStopped: true, gameActive: false });
+
+        case Actions.GAMENEW:
+            return Object.assign({}, state, { diskCount: 2, moveCount: 0 });
+
+        case 'TEST':
+            return Object.assign({}, state, { timer: !state.timer })
+
+        case 'START-GAME':
+            return Object.assign({}, state, { startGame: action.startGame })
+
+        default:
+            debugger
+            throw new Error();
+    }
+}
+
+function init(diskcount) {
+    return {
+        //disks: createDisks(diskcount),
+        diskCount: diskcount,
+        moveCount: 0,
+        boardRef: null,
+        rowHeight: 30,
+        gameStarted: false,
+        gameStopped: false,
+        gameNew: false,
+        timer: false,
+        startGame: null
+    }
+}
+
 const GameLayout = () => {
-    const { state, dispatch } = useContext(GameContext);
-    const { disks, rowHeight, boardRef } = state;
 
-    let stopGame = useRef(false);
-    let HTmover = useRef(null);
+    const [state, dispatch] = useReducer(reducer, 2, init);
 
+    // const { state, dispatch } = useContext(GameContext);
+    const { diskCount, rowHeight, gameStarted, boardRef } = state;
+
+    const board_Ref = useRef()
+    let diskRefs = null;
+
+    const htBoard = useMemo(() => <HTBoard
+        ref={board_Ref}
+        diskCount={state.diskCount}
+        rowHeight={state.rowHeight} />, [diskCount, rowHeight])
+
+
+    /**
+     *  Запуск в авто-режиме
+     */
     useEffect(() => {
-        //  debugger
+        if (!board_Ref.current) return
 
-        if (state.boardRef) {
-            console.log('Layout Mover', state)
-            HTmover = new Mover(state.boardRef, Test)
+        if (gameStarted) {
+
+            diskRefs = Object.values(board_Ref.current.children).filter(d => d.className.includes('disk'))
+            const allMoves = buildMoves(diskCount);
+
+            let next = doMoves(allMoves);
+            board_Ref.current.addEventListener('transitionend', (e) => handleTransitionEnd(e, next))
+            next();
+
+        } else {
+            diskRefs = null;
+            board_Ref.current.removeEventListener('transitionend', (e) => handleTransitionEnd(e, state))
         }
 
-        if (state.gameStopped) {
-            stopGame.current = true;
-        }
+        return () => {
+            alert(77)//??
+        };
 
-        if (state.gameActive) {
-
-            stopGame.current = false;
-            const allMoves = buildMoves(Object.keys(disks).length);
-
-            changePlace(allMoves[0]);
-            //!!!TMP
-            // const run = doMoves(allMoves);
-            // state.boardRef.addEventListener('transitionend', (e) => handleTransitionEnd(e, run))
-            //  run();
-        }
-    }, [state.gameStopped, state.boardRef])//или []
-
-
-    const Test = (e) => {
-        console.log('TEST', e)
-    }
-
-    useEffect(() => {
-        console.log('gameActive', state)
-
-    }, [state.gameActive])
-
-
-    const handleTransitionEnd = (e, next) => {
-        e.target.style.transition = 'none'
-        e.target.style.transform = 'initial'
-        e.target.style.gridArea = `${e.target.dataset.rowStart}` +
-            `/${e.target.dataset.colStart}` +
-            `/${e.target.dataset.rowEnd}` +
-            `/${e.target.dataset.colEnd}`
-        next();
-    }
-
-    // useEffect(() => {
-    //     if (state.boardRef) {
-    //         //??   state.boardRef.addEventListener('transitionend', (e) => handleTransitionEnd(e, state)) // (e) => {
-
-
-    //         //     if (e.propertyName == "transform") {
-    //         //         console.log('Transition ended', e);
-    //         //         console.log('data', e.target.dataset.rowStart, e.target.dataset.colStart, e.target.dataset.rowEnd, e.target.dataset.colEnd)
-
-    //         //         let currDisk = Object.values(state.disks)[e.target.dataset.idx]//  Object.values(disks)[move.disk - 1]
-
-    //         //         // currDisk.rowStart = e.target.dataset.rowStart;
-    //         //         // currDisk.colStart = e.target.dataset.colStart;
-    //         //         // currDisk.rowEnd = e.target.dataset.rowEnd;
-    //         //         // currDisk.colEnd = e.target.dataset.colEnd;
-
-    //         //         e.target.style.transition = 'none'
-    //         //         e.target.style.transform = 'initial'
-    //         //         e.target.style.gridArea = `${e.target.dataset.rowStart}/${e.target.dataset.colStart}/${e.target.dataset.rowEnd}/${e.target.dataset.colEnd}`
-    //         //         // debugger
-    //         //         //   dispatch({ type: Actions.UPDATEDISK, disks: state.disks })
-    //         //         // run()
-    //         //         // e.target.dataset.cb()
-    //         //     }
-    //         // });
-    //     }
-
-    // }, [state.boardRef])
-
-    const startGame = () => {
-
-        const allMoves = buildMoves(Object.keys(disks).length);
-        // let cr = 0;
-        run = doMoves(allMoves);
-        run();
-    }
+    }, [gameStarted])
 
     const doMoves = (moves) => {
         let curr = 0;
         function callback() {
-            if (curr < moves.length && !stopGame.current) {// !self.state.pause) {
-                changePlace(moves[curr++])//, callback);
+            if (curr < moves.length) {
+                changeDiskPlace(moves[curr++])//, callback);
             }
         }
         return callback;
     }
 
-    const changePlace = (move) => {
-        let currDisk = Object.values(disks)[move.disk - 1]
+    const changeDiskPlace = (move) => {
+        let currDiskRef = diskRefs[move.disk - 1]; //ссылка на текущий диск
 
-        //let diskCount_ColTo = Object.values(disks).filter(d => d.colStart === move.to).length;//кол-во дисков на целевом столбце
-        let diskCount_ColTo = Object.values(disks).filter(d => d.ref.style.gridArea.split('/')[1] == move.to).length
+        let diskCount_ColTo = diskRefs.filter(s => parseInt(s.style.gridArea.split('/')[1]) === move.to).length
+        let newNumRow = diskRefs.length - diskCount_ColTo //номер строки, на к-ю нужно переместить диск 
 
+        let newLeft = (move.to - move.from) * (parseInt(getComputedStyle(board_Ref.current).width) / 3) //Left координаты
+        let newTop = (newNumRow - diskRefs[move.disk - 1].style.gridArea.split('/')[0]) * rowHeight
 
-        let newNumRow = Object.values(disks).length == 1 ? 1 : Object.values(disks).length - diskCount_ColTo
-        let newLeft = (move.to - move.from) * (boardRef.offsetWidth / 3) //Left Top координаты
-
-        //let newTop = (newNumRow - Object.values(disks)[move.disk - 1].rowStart) * rowHeight// * newNumRow//top нового адреса
-        let newTop = (newNumRow - currDisk.ref.style.gridArea.split('/')[0]) * rowHeight
-
-
-        //  debugger
-        //currDisk.ref.setAttribute('style', `top:${newTop}px; left:${newLeft}px;`); //top = newTop + 'px';
-        //currDisk.ref.style.top = `${newTop}px`
-        //currDisk.ref.style.left = `${newLeft}px`
-
-
+        currDiskRef.style.zIndex = isNaN(parseInt(currDiskRef.style.zIndex)) ? 5 : parseInt(currDiskRef.style.zIndex) + 1
         // debugger
-        // currDisk.ref.dataset.cb = cb;
+        currDiskRef.dataset.rowStart = newNumRow;
+        currDiskRef.dataset.colStart = move.to
+        currDiskRef.dataset.rowEnd = newNumRow + 1;
+        currDiskRef.dataset.colEnd = move.to + 1
 
-        currDisk.ref.dataset.idx = move.disk - 1;
-        currDisk.ref.dataset.rowStart = newNumRow;
-        currDisk.ref.dataset.colStart = move.to
-        currDisk.ref.dataset.rowEnd = newNumRow + 1;
-        currDisk.ref.dataset.colEnd = move.to + 1
+        currDiskRef.style.transition = 'transform 1s ease-out'
+        currDiskRef.style.transform = `translate(${newLeft}px,${newTop}px)`
+    }
 
-        currDisk.ref.style.zIndex = parseInt(currDisk.ref.style.zIndex) + 1
+    const handleTransitionEnd = (e, next) => {
+        e.target.style.transition = 'none'
+        e.target.style.transform = 'initial'
 
-        currDisk.ref.style.transition = 'transform 1s ease-out'
-        currDisk.ref.style.transform = `translate(${newLeft}px,${newTop}px)`
-        //    return
-        /*
-                anime({
-                    targets: Object.values(disks)[move.disk - 1].ref,
-                    left: newLeft,
-                    top: newTop,
-                    duration: 600,
-                    easing: 'cubicBezier(.9, .9, .01, .01)',
-        
-                    begin: function (anim) {
-                        currDisk.ref.style.zIndex = parseInt(currDisk.ref.style.zIndex) + 1
-                    },
-                    complete: function (anim) {
-                        currDisk.rowStart = newNumRow;
-                        currDisk.colStart = move.to;
-                        currDisk.rowEnd = newNumRow + 1;
-                        currDisk.colEnd = move.to + 1
-        
-                        dispatch({ type: Actions.UPDATEDISK, disks: state.disks })
-        
-                        currDisk.ref.style.top = 0;
-                        currDisk.ref.style.left = 0;
-        
-                        setTimeout(() => {
-                            cb()
-                        }, 100);
-                    }
-                });
-          */
+        e.target.style.gridArea = `${e.target.dataset.rowStart}` +
+            `/${e.target.dataset.colStart}` +
+            `/${e.target.dataset.rowEnd}` +
+            `/${e.target.dataset.colEnd}`
 
+        dispatch({ type: Actions.DISKMOVED });
+
+        next();
     }
 
     return (
-        <div className='game'>
-            {state.gameStopped.toString()}
-            <DndProvider backend={Backend}>
-                <Board />
-            </DndProvider>
-            <Controls />
-        </div>
+        <GameContext.Provider value={dispatch}>
+            <div className='game'>
+                <Controls {...state} />
+                <DndProvider backend={Backend}>
+                    {htBoard}
+                </DndProvider>
+            </div>
+        </GameContext.Provider>
     )
 }
 
-export default GameLayout
+export { GameLayout, GameContext }

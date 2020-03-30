@@ -1,10 +1,12 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { HanoiTower } from './hanoi-tower'
-import { GameProvider } from './gameProvider'
+//import { HanoiTower } from './hanoi-tower'
+//import { GameProvider } from './gameProvider'
+
+import { GameLayout } from './gameLayout'
 
 render(
-    <GameProvider />
+    <GameLayout />
     , document.querySelector('#app')
 )
 

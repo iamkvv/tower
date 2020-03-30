@@ -40,6 +40,8 @@
   /* min-height: 300px; */
 }
 
+/* transition: transform 1s ease-out; */
+/*
 .disk {
   position: relative;
   height: 94%;
@@ -48,22 +50,19 @@
   z-index: 5;
   top: 0px;
   left: 0px;
-  /* transition: transform 1s ease-out; */
+  
 }
 
 .drop-cell {
   width: 100%;
   height: 100%;
-
 }
 
 .peg {
   position: absolute;
   width: 2px;
   background-color: rgb(196, 166, 166);
-  /* height: 300px; */
   bottom: 0;
-  /* left: calc(33.3% / 2); */
   text-align: center;
 }
 
@@ -75,4 +74,4 @@
   text-align: center;
   top: -20px;
   left: -5px;
-}
+} */

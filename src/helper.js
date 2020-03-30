@@ -26,6 +26,17 @@ export const createDisks = (qnt) => {
     for (let i = 0; i < qnt; i++) {
 
         w = w + (85 / qnt) //установка ширины диска
+
+        disksData.push(
+            <Disk color={colors[i]}
+                width={w}
+                gridArea={`${i + 1}/1/${i + 2}/2`}
+                idx={i}
+                key={'d' + i}
+                id={'d' + i}
+            />
+        )
+
         /*
         disksData.push({
             idx: i,
@@ -37,19 +48,21 @@ export const createDisks = (qnt) => {
             colEnd: 2
         })
         */
-        diskObj[i] = {
-            idx: i,
-            width: w + '%',
-            color: colors[i],
-            rowStart: i + 1,
-            colStart: 1,
-            rowEnd: i + 2,
-            colEnd: 2,
-            ref: null
-        }
+
+
+        // diskObj[i] = {
+        //     idx: i,
+        //     width: w + '%',
+        //     color: colors[i],
+        //     rowStart: i + 1,
+        //     colStart: 1,
+        //     rowEnd: i + 2,
+        //     colEnd: 2,
+        //     ref: null
+        // }
 
     }
-    return diskObj //disksData;
+    return disksData //diskObj;
 }
 
 export const buildMoves = (k) => { //строит массив ходов для заданного кол-ва дисков

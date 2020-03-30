@@ -10,7 +10,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 
 import { Actions } from './constants'
 //import { GameContext } from './hanoi-tower'
-import { GameContext } from './gameProvider'
+import { GameContext } from './gameLayout'    //'./gameProvider'
 import Timer from './timer'
 
 
@@ -31,15 +31,15 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const Controls = () => {
-    const { state, dispatch } = useContext(GameContext);
-    const { disks, gameActive } = state;
+function Controls(props) {
+    const dispatch = useContext(GameContext);
 
     const classes = useStyles();
 
     const onDiskCountChange = (e, val) => {
-        // const val = e.target.value;
-        dispatch({ type: Actions.DISKCOUNT, count: val })
+        if (val != props.diskCount)
+            dispatch({ type: Actions.DISKCOUNT, diskcount: val })
+
     }
 
     const handleChange = event => {
@@ -56,7 +56,7 @@ const Controls = () => {
     // }, [state.gameActive]);//или []
 
     const onClickStart = () => {
-        dispatch({ type: Actions.GAMEACTIVE });
+        dispatch({ type: Actions.GAMESTARTED });
     }// startGame(); }
 
     const onClickStop = () => {
@@ -64,23 +64,24 @@ const Controls = () => {
     }
 
     const onClickNew = () => {
-        dispatch({ type: Actions.GAMENEW });
+        dispatch({ type: Actions.DISKCOUNT, diskcount: 0 })
         setTimeout(() => {
-            dispatch({ type: Actions.GAMENEW });
-        }, 1000);
+            dispatch({ type: Actions.GAMENEW })
+        }, 100);
     }
 
     const onClickTest = () => {
         //dispatch({ type: Actions.GAMEACTIVE });
-        console.log(state.disks)
+        //  console.log(state.disks)
         debugger
     }// startGame(); }
 
 
 
     return (<div className='controls'>
-        {state.disks.length}{state.gameActive.toString()}
+
         <div className={classes.root}>
+            <h1>{props.moveCount}</h1>
             <div>
                 <FormLabel>Режим игры</FormLabel>
                 <RadioGroup value='manual' onChange={handleChange} row>
@@ -91,10 +92,12 @@ const Controls = () => {
             <div>
                 <FormLabel>Количество дисков</FormLabel>
                 <Slider
-                    disabled={state.gameActive}
+
                     onChange={(e, val) => onDiskCountChange(e, val)}
-                    defaultValue={Object.values(disks).length}
-                    getAriaValueText={() => Object.values(disks).length}//{() => "Д"}
+                    defaultValue={props.diskCount} //{Object.values(disks).length}
+                    value={props.diskCount}
+                    // getAriaValueText={() => props.diskCount} ///Object.values(disks).length}//{() => "Д"}
+                    track={false}
                     aria-labelledby="discrete-slider"
                     valueLabelDisplay="auto"
                     step={1}
@@ -105,9 +108,10 @@ const Controls = () => {
             </div>
 
             <div className='buttons'>
+                {/* disabled={state.gameActive} */}
                 <Button
                     onClick={() => onClickStart()}
-                    disabled={state.gameActive} size="small" variant="contained" color="primary">
+                    size="small" variant="contained" color="primary">
                     Играть
             </Button>
                 <Button onClick={() => onClickStop()} size="small" variant="contained" color="primary">
@@ -132,7 +136,7 @@ const Controls = () => {
 
         <div>
             {
-                gameActive && <Timer />
+                <Timer />
             }
         </div>
     </div>)

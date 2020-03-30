@@ -1,7 +1,7 @@
 import React, { useReducer, useCallback, useEffect } from 'react'
 import { Actions } from './constants'
 import { createDisks } from './helper'
-import GameLayout from './gameLayout'
+//import GameLayout from './gameLayout'
 
 const GameContext = React.createContext();
 
