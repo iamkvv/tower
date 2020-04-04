@@ -56,19 +56,27 @@ function Controls(props) {
     // }, [state.gameActive]);//или []
 
     const onClickStart = () => {
-        dispatch({ type: Actions.GAMESTARTED });
+        props.go();
+
+        // dispatch({ type: Actions.GAMESTARTED });
     }// startGame(); }
 
     const onClickStop = () => {
-        dispatch({ type: Actions.GAMESTOPPED });
+        // dispatch({ type: Actions.GAMESTOPPED });
+        props.pause()
     }
 
     const onClickNew = () => {
-        dispatch({ type: Actions.DISKCOUNT, diskcount: 0 })
-        setTimeout(() => {
-            dispatch({ type: Actions.GAMENEW })
-        }, 100);
+        props.newgame();
+
+        // dispatch({ type: Actions.DISKCOUNT, diskcount: 0 })
+
+        // setTimeout(() => {
+        //  dispatch({ type: Actions.GAMENEW })
+        //     }, 200);
     }
+
+
 
     const onClickTest = () => {
         //dispatch({ type: Actions.GAMEACTIVE });
@@ -77,7 +85,7 @@ function Controls(props) {
     }// startGame(); }
 
 
-
+    console.log('controls render')
     return (<div className='controls'>
 
         <div className={classes.root}>

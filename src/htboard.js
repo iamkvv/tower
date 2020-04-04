@@ -1,4 +1,4 @@
-import React, { forwardRef, useContext } from 'react'
+import React, { forwardRef, useEffect, useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { GameContext } from './gameLayout'
 import Peg from './peg'
@@ -25,16 +25,21 @@ function HTBoard(props, ref) {
 
     const styleData = { diskCount: props.diskCount, rowHeight: props.rowHeight }
     const classes = useStyles(styleData);
+    // debugger
+
+    useEffect(() => {
+        //  debugger
+        console.log("HTBoard!!", props, ref)
+
+    }, [])
 
 
-    console.log("HTBoard!!")
 
     let pegNames = ['A', 'B', 'C'];
     return (
         <div className={classes.board}
             ref={ref}
         >
-
             {renderDropCells(props.diskCount)}
 
             {createDisks(props.diskCount)}
@@ -45,7 +50,6 @@ function HTBoard(props, ref) {
 
         </div>
     )
-
 }
 
 HTBoard = forwardRef(HTBoard)

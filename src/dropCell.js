@@ -1,9 +1,9 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import { ItemTypes } from './constants';
 import { useDrop } from 'react-dnd'
 
-//import { GameContext } from './gameProvider'
+//import { GameContext } from './gameLayout'
 
 const useStyles = makeStyles({
     dropcell: props => ({
@@ -16,9 +16,9 @@ const useStyles = makeStyles({
 
 function DropCell(props) {
     // const { state } = useContext(GameContext);
-    // const { disks } = state;
+    //  const { boardRef } = state;
 
-    const parentRef = useRef();
+    // const parentRef = useRef();
     // const currentRef = useRef();
 
     function createRefs(ref) {
@@ -30,12 +30,13 @@ function DropCell(props) {
             if (typeof ref === 'function') {
                 ref(targetRef.current);
 
+                /*
                 parentRef.current = Object.values(
                     targetRef.current
                         .parentNode.children)
                     .filter(d => d.className.includes('disk'))
                     .map(s => getComputedStyle(s));
-
+*/
             }
         })//, [ref]);
 
@@ -50,21 +51,31 @@ function DropCell(props) {
         },
 
         canDrop: (item, monitor) => {
+            // //     let disksInCol = parentRef.current.filter(d => parseInt(d.gridArea.split('/')[1]) === props.col)
+            // let allDisks = Object.values(boardRef.children).filter(d => d.className.includes('disk'))
+            // let disksInCurrCol = allDisks.filter(d => d.style.gridColumnStart == props.col);
 
-            let disksInCol = parentRef.current.filter(d => parseInt(d.gridArea.split('/')[1]) === props.col)
-
-            if (disksInCol.length == 0) {
-                if ((parentRef.current.length - disksInCol.length - props.row == 0)) {//строка последняя?
+            let disksInCurrCol = props.board().filter(d => parseInt(d.gridColumnStart) === props.col);//кол-во дисков в столбце этой dropCell,
+            // console.log('canDrop_1', disksInCurrCol, props.col);
+            //debugger
+            if (disksInCurrCol.length == 0) {
+                // if ((Object.values(boardRef.children).length - disksInCurrCol.length - props.row == 0)) {//строка последняя?
+                //if (allDisks.length === props.row)
+                if (props.board().length === props.row)//нижняя строка
                     return true
-                }
             } else {
-                let minWidthInCol = Math.min(...disksInCol.map(d => parseInt(d.maxWidth)))
-                if (parseInt(item.width) < minWidthInCol && parentRef.current.length - disksInCol.length - props.row === 0) {
+                //if (allDisks.length - disksInCurrCol.length === props.row)
+                //   return true
+                // let minWidthInCol = Math.min(...disksInCurrCol.map(d => parseInt(getComputedStyle(d).maxWidth)))
+
+                let minWidthInCol = Math.min(...disksInCurrCol.map(d => parseInt(d.width)))
+                // console.log('canDrop_2', disksInCurrCol, parseInt(item.width))
+                //debugger
+                //if (parseInt(item.width) < minWidthInCol && props.board.length - disksInCurrCol.length - props.row === 0)
+                if (parseInt(props.board()[item.idx].width) < minWidthInCol && props.board().length - disksInCurrCol.length - props.row === 0)
                     return true
-                }
             }
         },
-
         collect: (monitor) => {
             return {
                 isOver: !!monitor.canDrop()
@@ -76,7 +87,7 @@ function DropCell(props) {
     const classes = useStyles(styleData);
 
     return (
-        <div ref={createRefs(dropRef)}
+        <div ref={dropRef}//{createRefs(dropRef)}
             className={classes.dropcell} />
     )
 }

@@ -14,26 +14,29 @@ import chroma from 'chroma-js'
 //     }
 // })
 
+let test = 0;
 
-export const createDisks = (qnt) => {
+export const createDisks = (qnt, board, boardTest) => {
     let disksData = [];
-    let diskObj = {};
-    // let colors = chroma.scale(['blue', 'yellow', 'violet', 'darkmagenta'])
-    let colors = chroma.scale([chroma.random(), 'yellow', 'violet', chroma.random()])
-        .mode('lch').colors(qnt);
+    // let diskObj = {};
+    // let colors = chroma.scale(['blue', 'yellow', 'violet', 'darkmagenta']).mode('lch').colors(qnt);
+    let colors = chroma.scale([chroma.random(), 'yellow', 'violet', chroma.random()]).mode('lch').colors(qnt);
 
     let w = 10;
     for (let i = 0; i < qnt; i++) {
 
         w = w + (85 / qnt) //установка ширины диска
-
+        // debugger
         disksData.push(
             <Disk color={colors[i]}
+                ttt={test++}
                 width={w}
                 gridArea={`${i + 1}/1/${i + 2}/2`}
                 idx={i}
-                key={'d' + i}
-                id={'d' + i}
+                key={'d' + i + test}
+                board={board}
+                boardTest={boardTest}   //сделать функцию, возвращающую doard, а не прямую ссылку 
+
             />
         )
 
@@ -50,19 +53,9 @@ export const createDisks = (qnt) => {
         */
 
 
-        // diskObj[i] = {
-        //     idx: i,
-        //     width: w + '%',
-        //     color: colors[i],
-        //     rowStart: i + 1,
-        //     colStart: 1,
-        //     rowEnd: i + 2,
-        //     colEnd: 2,
-        //     ref: null
-        // }
-
     }
-    return disksData //diskObj;
+
+    return disksData;
 }
 
 export const buildMoves = (k) => { //строит массив ходов для заданного кол-ва дисков
@@ -80,7 +73,7 @@ export const buildMoves = (k) => { //строит массив ходов для
         .map(d => ({ disk: parseInt(d[0]), from: d[1], to: d[2] }))
 };
 
-export const renderDropCells = (diskCount) => {
+export const renderDropCells = (diskCount, board) => {
     let r, c = 0;
     return new Array(diskCount * 3)
         .fill(null, 0, diskCount * 3)
@@ -88,10 +81,11 @@ export const renderDropCells = (diskCount) => {
             if (!(i % (diskCount))) { r = 0; c++; } r++
             return (
                 <DropCell
-                    // className={ddStyle.ddcell}
                     key={'c' + i}
                     row={r}
-                    col={c} />)
+                    col={c}
+                    board={board}
+                />)
         })
 }
 

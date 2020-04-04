@@ -1,20 +1,16 @@
-import React, { useReducer, forwardRef, useContext, useEffect, useRef, useLayoutEffect, useCallback, useMemo } from 'react'
-//import anime from 'animejs/lib/anime.es.js'
-
+import React, { useReducer, useEffect, useRef, useMemo, useCallback } from 'react'
 import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
 
-//import { GameContext } from './gameProvider'
 import { Actions } from './constants'
 import { buildMoves } from './helper'
-import Board from './bo-ard'
 
-import HTBoard from './htboard'
+import Board from './bo-ard'
+//import HTBoard from './htboard'
 
 import Controls from './controls'
 
 import Mover from './mover'
-
 import './App.css'
 
 const GameContext = React.createContext();
@@ -28,13 +24,6 @@ function reducer(state, action) {
         case Actions.DISKMOVED:
             return Object.assign({}, state, { moveCount: state.moveCount + 1 });
 
-
-
-
-
-        // case Actions.DISKREF:
-        //     return Object.assign({}, state, state.diskRefs[action.diskref.idx] = action.diskref.ref);
-
         case Actions.BOARDREF:
             return Object.assign({}, state, { boardRef: action.boardref });
 
@@ -45,7 +34,7 @@ function reducer(state, action) {
             return Object.assign({}, state, { gameStopped: true, gameActive: false });
 
         case Actions.GAMENEW:
-            return Object.assign({}, state, { diskCount: 2, moveCount: 0 });
+            return Object.assign({}, state, { antimemo: state.antimemo + 1, gameNew: !state.gameNew, diskCount: 2, moveCount: 0 });
 
         case 'TEST':
             return Object.assign({}, state, { timer: !state.timer })
@@ -66,6 +55,8 @@ function init(diskcount) {
         moveCount: 0,
         boardRef: null,
         rowHeight: 30,
+        antimemo: 0,
+
         gameStarted: false,
         gameStopped: false,
         gameNew: false,
@@ -75,97 +66,86 @@ function init(diskcount) {
 }
 
 const GameLayout = () => {
-
     const [state, dispatch] = useReducer(reducer, 2, init);
+    //const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
-    // const { state, dispatch } = useContext(GameContext);
-    const { diskCount, rowHeight, gameStarted, boardRef } = state;
+    const { diskCount, gameNew, rowHeight } = state;
+
+    const rootRef = useRef()
 
     const board_Ref = useRef()
-    let diskRefs = null;
 
-    const htBoard = useMemo(() => <HTBoard
-        ref={board_Ref}
-        diskCount={state.diskCount}
-        rowHeight={state.rowHeight} />, [diskCount, rowHeight])
+    let mover = useRef(null);
 
-
-    /**
-     *  Запуск в авто-режиме
-     */
-    useEffect(() => {
-        if (!board_Ref.current) return
-
-        if (gameStarted) {
-
-            diskRefs = Object.values(board_Ref.current.children).filter(d => d.className.includes('disk'))
-            const allMoves = buildMoves(diskCount);
-
-            let next = doMoves(allMoves);
-            board_Ref.current.addEventListener('transitionend', (e) => handleTransitionEnd(e, next))
-            next();
-
-        } else {
-            diskRefs = null;
-            board_Ref.current.removeEventListener('transitionend', (e) => handleTransitionEnd(e, state))
-        }
-
-        return () => {
-            alert(77)//??
-        };
-
-    }, [gameStarted])
-
-    const doMoves = (moves) => {
-        let curr = 0;
-        function callback() {
-            if (curr < moves.length) {
-                changeDiskPlace(moves[curr++])//, callback);
-            }
-        }
-        return callback;
-    }
-
-    const changeDiskPlace = (move) => {
-        let currDiskRef = diskRefs[move.disk - 1]; //ссылка на текущий диск
-
-        let diskCount_ColTo = diskRefs.filter(s => parseInt(s.style.gridArea.split('/')[1]) === move.to).length
-        let newNumRow = diskRefs.length - diskCount_ColTo //номер строки, на к-ю нужно переместить диск 
-
-        let newLeft = (move.to - move.from) * (parseInt(getComputedStyle(board_Ref.current).width) / 3) //Left координаты
-        let newTop = (newNumRow - diskRefs[move.disk - 1].style.gridArea.split('/')[0]) * rowHeight
-
-        currDiskRef.style.zIndex = isNaN(parseInt(currDiskRef.style.zIndex)) ? 5 : parseInt(currDiskRef.style.zIndex) + 1
+    const getMover = (_mover) => {
+        //mover.current = d
+        //mover.current = null
         // debugger
-        currDiskRef.dataset.rowStart = newNumRow;
-        currDiskRef.dataset.colStart = move.to
-        currDiskRef.dataset.rowEnd = newNumRow + 1;
-        currDiskRef.dataset.colEnd = move.to + 1
-
-        currDiskRef.style.transition = 'transform 1s ease-out'
-        currDiskRef.style.transform = `translate(${newLeft}px,${newTop}px)`
+        mover.current = _mover
+        // console.log('getMover', _mover)
     }
 
-    const handleTransitionEnd = (e, next) => {
-        e.target.style.transition = 'none'
-        e.target.style.transform = 'initial'
+    const mBoard = useMemo(() => <Board
+        ref={board_Ref}
+        getMover={getMover}
+        diskCount={state.diskCount}
+        gameNew={state.gameNew}
+        rowHeight={state.rowHeight}
+    />, [diskCount, gameNew, rowHeight])
 
-        e.target.style.gridArea = `${e.target.dataset.rowStart}` +
-            `/${e.target.dataset.colStart}` +
-            `/${e.target.dataset.rowEnd}` +
-            `/${e.target.dataset.colEnd}`
 
-        dispatch({ type: Actions.DISKMOVED });
+    const newgame = () => {
 
-        next();
+        // mover.current = null;
+        // debugger
+        dispatch({ type: Actions.GAMENEW })
+        //forceUpdate()
+
     }
+
+    const go = () => {
+        mover.current.currMove = 0;
+        mover.current.start();//.go();///start();
+    }
+
+    const pause = () => {
+        if (!mover.current.isPause) {
+            mover.current.pause()
+        }
+        else {
+            mover.current.pause()
+
+            mover.current.continue()
+        }
+    }
+
+    // useEffect(() => {
+
+    //     console.log('Layout', rootRef.current, board_Ref.current);
+    //     let brd = Object.values(rootRef.current.children).filter(d => d.className.includes('board'))[0];
+    //     brd.zzz = false
+    //     // let disks=  Object.values(brd.children).filter(d=>d.className.includes('disk'))
+
+    //     const mvr = new Mover(brd, -5, dispatch);
+    //     mover.current = mvr;
+    //     // debugger
+    //     mover.current.start();
+
+    // }, [])// [state.gameNew])
+
 
     return (
         <GameContext.Provider value={dispatch}>
-            <div className='game'>
-                <Controls {...state} />
+            <div ref={rootRef} className='game'>
+                <Controls
+                    newgame={newgame}
+                    go={go}
+                    pause={pause}
+                    {...state}
+                />
                 <DndProvider backend={Backend}>
-                    {htBoard}
+                    {mBoard}
+                    {/* <Board diskCount={state.diskCount} /> */}
                 </DndProvider>
             </div>
         </GameContext.Provider>

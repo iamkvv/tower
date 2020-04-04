@@ -24,7 +24,7 @@ const Disk = (props) => {
     const dispatch = useContext(GameContext);
 
     const classes = useStyles(props);
-    const parentRef = useRef();
+
     const currentRef = useRef();
 
     //https://github.com/facebook/react/issues/13029
@@ -40,17 +40,17 @@ const Disk = (props) => {
 
                     currentRef.current = targetRef.current;//??
 
-                    parentRef.current = Object.values(
-                        targetRef.current
-                            .parentNode.children)
-                        .filter(d => d.className.includes('disk'))
-                        .map(s => getComputedStyle(s));
+                    // parentRef.current = Object.values(
+                    //     targetRef.current
+                    //         .parentNode.children)
+                    //     .filter(d => d.className.includes('disk'))
+                    //     .map(s => getComputedStyle(s));
 
                 } else {
                     ref.current = targetRef.current;
                 }
             });
-        }, [refs]);
+        }, []) //[refs]);
 
         return targetRef;
     }
@@ -58,21 +58,22 @@ const Disk = (props) => {
     const [{ }, dragRef] = useDrag({
         item: {
             type: ItemTypes.DISK,
-            gridArea: props.gridArea, //зачем??
+            //  gridArea: props.gridArea, //зачем??
             width: props.width,
             idx: props.idx,
         },
+
         canDrag: (item, monitor) => {
-            let currCol = getComputedStyle(currentRef.current).gridColumnStart;  //Номер колонки (colStart) перемещаемого диска
-            //?? использовать минимальную rowStart!!
-            let disksInCurrCol = parentRef.current.filter(d => d.gridColumnStart == currCol);  //массив дисков в колонке перемещаемого диска
-            let minWidthInCol = Math.min(...disksInCurrCol.map(d => parseInt(d.width))) // минимальная ширина диска в этой колонке
-            //если ширина перемещаемого диска минимальна, то разрешаем Drag
-            if (parseInt(getComputedStyle(currentRef.current).width) === minWidthInCol) return true
+            let currCol = getComputedStyle(currentRef.current).gridColumnStart;  //Номер колонки перемещаемого диска
+            let disksInCurrCol = props.board().filter(d => d.gridColumnStart === currCol);
+            let minWidthInCol = Math.min(...disksInCurrCol.map(d => parseInt(d.width)))
+
+            if (parseInt(getComputedStyle(currentRef.current).width) === minWidthInCol) return true;
         },
         end: (item, monitor) => {
             //получаем {dropEffect: "move", dropRow: 3, dropCol: 2, sourceIdx: 0} т.е. на что изменить и кому
             let result = monitor.getDropResult()
+
             if (result) {
                 dispatch({ type: Actions.DISKMOVED });
 
@@ -81,19 +82,25 @@ const Disk = (props) => {
                     `/${result.dropRow + 1}` +
                     `/${result.dropCol + 1}`
 
-                if (parentRef.current.filter(d => parseInt(d.gridColumnStart) === 2).length === parentRef.current.length) {
-                    alert('all')
-                }
+                let disksIn_2Column = props.board().filter(d => parseInt(d.gridColumnStart) === 2)
 
+                if (props.board().length === disksIn_2Column.length) {
+                    alert('OK')
+                }
                 // определить конец игры
             }
         }
     })
 
+    const ttt = (e) => {
+        console.log(props.boardTest(e));
+    }
+    console.log('render Disk')
     return (
         <div ref={useCombinedRefs(dragRef)}
             className={classes.disk}
             style={{ gridArea: props.gridArea }}
+            onClick={(e) => ttt(e)}
         >
             {props.idx}
         </div>

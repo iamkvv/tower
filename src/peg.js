@@ -1,6 +1,5 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-import useBoard from './useBoard'
 
 const useStyles = makeStyles({
 
@@ -31,8 +30,6 @@ const useStyles = makeStyles({
 
 const Peg = (props) => {
     const classes = useStyles(props);
-    // const [Board_Ref, testBoard] = useBoard()
-    // debugger
 
     return (
         <div className={classes.peg} />
