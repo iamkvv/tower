@@ -42,9 +42,8 @@ function Controls(props) {
 
     }
 
-    const handleChange = event => {
-        //!! setValue(event.target.value);
-        alert(event.target.value)
+    const handleChangeMode = event => {
+        dispatch({ type: Actions.CHANGEMODE, mode: event.target.value })
     };
 
 
@@ -92,7 +91,7 @@ function Controls(props) {
             <h1>{props.moveCount}</h1>
             <div>
                 <FormLabel>Режим игры</FormLabel>
-                <RadioGroup value='manual' onChange={handleChange} row>
+                <RadioGroup value={props.mode} onChange={handleChangeMode} row>
                     <FormControlLabel value="auto" control={<Radio />} label="Авто" />
                     <FormControlLabel value="manual" control={<Radio />} label="Ручной" />
                 </RadioGroup>
@@ -100,9 +99,8 @@ function Controls(props) {
             <div>
                 <FormLabel>Количество дисков</FormLabel>
                 <Slider
-
                     onChange={(e, val) => onDiskCountChange(e, val)}
-                    defaultValue={props.diskCount} //{Object.values(disks).length}
+                    // defaultValue={props.diskCount} //{Object.values(disks).length}
                     value={props.diskCount}
                     // getAriaValueText={() => props.diskCount} ///Object.values(disks).length}//{() => "Д"}
                     track={false}

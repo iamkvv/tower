@@ -1,15 +1,9 @@
-import React, { useReducer, useEffect, useRef, useMemo, useCallback } from 'react'
+import React, { useReducer, useRef, useMemo, useCallback } from 'react'
 import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
-
 import { Actions } from './constants'
-import { buildMoves } from './helper'
-
 import Board from './bo-ard'
-//import HTBoard from './htboard'
-
 import Controls from './controls'
-
 import Mover from './mover'
 import './App.css'
 
@@ -24,8 +18,15 @@ function reducer(state, action) {
         case Actions.DISKMOVED:
             return Object.assign({}, state, { moveCount: state.moveCount + 1 });
 
-        case Actions.BOARDREF:
-            return Object.assign({}, state, { boardRef: action.boardref });
+        case Actions.CHANGEMODE:
+            return Object.assign({}, state, { mode: action.mode, moveCount: 0 });
+
+        case Actions.GAMEOVER:
+            return Object.assign({}, state, { gameOver: !state.gameOver });
+
+
+        // case Actions.BOARDREF:
+        //     return Object.assign({}, state, { boardRef: action.boardref });
 
         case Actions.GAMESTARTED:
             return Object.assign({}, state, { gameStarted: !state.gameStarted });
@@ -43,20 +44,19 @@ function reducer(state, action) {
             return Object.assign({}, state, { startGame: action.startGame })
 
         default:
-            debugger
             throw new Error();
     }
 }
 
 function init(diskcount) {
     return {
-        //disks: createDisks(diskcount),
         diskCount: diskcount,
+        mode: 'auto',
         moveCount: 0,
-        boardRef: null,
+        gameOver: false,
         rowHeight: 30,
-        antimemo: 0,
 
+        // boardRef: null,
         gameStarted: false,
         gameStopped: false,
         gameNew: false,
@@ -67,44 +67,36 @@ function init(diskcount) {
 
 const GameLayout = () => {
     const [state, dispatch] = useReducer(reducer, 2, init);
-    //const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
-
-    const { diskCount, gameNew, rowHeight } = state;
-
-    const rootRef = useRef()
-
+    const { diskCount, gameNew, rowHeight, mode, gameOver } = state;
     const board_Ref = useRef()
 
     let mover = useRef(null);
 
-    const getMover = (_mover) => {
-        //mover.current = d
-        //mover.current = null
-        // debugger
-        mover.current = _mover
-        // console.log('getMover', _mover)
-    }
+    const createMover = useCallback(
+        () => {
+            const mvr = new Mover(board_Ref.current, diskCount, rowHeight, dispatch)
+            mover.current = mvr
+        },
+        [diskCount, gameNew],
+    );
 
     const mBoard = useMemo(() => <Board
         ref={board_Ref}
-        getMover={getMover}
-        diskCount={state.diskCount}
-        gameNew={state.gameNew}
-        rowHeight={state.rowHeight}
-    />, [diskCount, gameNew, rowHeight])
+        createMover={createMover}
+        //  getMover={getMover}  !!заменить на ...state
+        diskCount={diskCount}
+        mode={mode}
+        gameOver={gameOver}
+        gameNew={gameNew}
+        rowHeight={rowHeight}
+    />, [diskCount, gameNew, mode])
 
 
     const newgame = () => {
-
-        // mover.current = null;
-        // debugger
         dispatch({ type: Actions.GAMENEW })
-        //forceUpdate()
-
     }
 
     const go = () => {
-        mover.current.currMove = 0;
         mover.current.start();//.go();///start();
     }
 
@@ -119,24 +111,9 @@ const GameLayout = () => {
         }
     }
 
-    // useEffect(() => {
-
-    //     console.log('Layout', rootRef.current, board_Ref.current);
-    //     let brd = Object.values(rootRef.current.children).filter(d => d.className.includes('board'))[0];
-    //     brd.zzz = false
-    //     // let disks=  Object.values(brd.children).filter(d=>d.className.includes('disk'))
-
-    //     const mvr = new Mover(brd, -5, dispatch);
-    //     mover.current = mvr;
-    //     // debugger
-    //     mover.current.start();
-
-    // }, [])// [state.gameNew])
-
-
     return (
         <GameContext.Provider value={dispatch}>
-            <div ref={rootRef} className='game'>
+            <div className='game'>
                 <Controls
                     newgame={newgame}
                     go={go}
@@ -145,8 +122,12 @@ const GameLayout = () => {
                 />
                 <DndProvider backend={Backend}>
                     {mBoard}
-                    {/* <Board diskCount={state.diskCount} /> */}
                 </DndProvider>
+
+                <div style={{ display: 'block', gridArea: '2/1/3/2', zIndex: 1000, opacity: 0.5, backgroundColor: '#fff', width: '100%', height: diskCount * rowHeight }}>
+                    jhggj  jj
+                </div>
+
             </div>
         </GameContext.Provider>
     )

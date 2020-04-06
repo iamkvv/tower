@@ -1,9 +1,8 @@
 import { buildMoves } from './helper'
 import { Actions } from './constants'
 
-
-function Mover(boardRef, diskCount, disp) {
-    this.boardRef = boardRef;
+function Mover(boardRef, diskCount, rowHeight, disp) {
+    // this.boardRef = boardRef;
     // this.diskCount = diskCount;
     this.isPause = false;
     this.currMove = 0;
@@ -12,54 +11,49 @@ function Mover(boardRef, diskCount, disp) {
     this.go = null
 
     let diskRefs = null;
+    let transHandler = null
 
-    const qqq = function (n, e) {
-        console.log(arguments)
-        // debugger
-        this.handle(arguments[1], arguments[0])
-    }
+    function getTransHandler(nxt) {
 
+        const transEnd = (e) => {
+            e.target.style.transition = 'none'
+            e.target.style.transform = 'initial'
 
-    const ddd = (e, n) => {
-        // debugger
-        //this.handle(n, next)
-        this.test(n, e)
-    }
+            e.target.style.gridArea = `${e.target.dataset.rowStart}` +
+                `/${e.target.dataset.colStart}` +
+                `/${e.target.dataset.rowEnd}` +
+                `/${e.target.dataset.colEnd}`
 
-    function wrap(n) {
-        function zz(e) {
-            test(e, n)
+            disp({ type: Actions.DISKMOVED });
+
+            let disksIn2Col = diskRefs.filter(d => parseInt(d.style.gridColumnStart) === 2).length;
+
+            if (disksIn2Col >= diskCount) {
+                boardRef.removeEventListener('transitionend', transHandler)
+                console.log('GameOver')
+                disp({ type: Actions.GAMEOVER })
+            } else {
+                if (!this.isPause) {
+                    nxt()
+                }
+            }
         }
-        return zz
-    }
 
-    let cache = null
+        return transEnd
+    }
 
     this.start = function () {
+        this.currMove = 0
         //https://medium.com/@DavideRama/removeeventlistener-and-anonymous-functions-ab9dbabd3e7b
-        // diskRefs = Object.values(this.boardRef.children).filter(d => d.className.includes('disk'))
         diskRefs = Object.values(boardRef.children).filter(d => d.className.includes('disk'))
-        const allMoves = buildMoves(diskRefs.length);//    (this.diskCount);
 
-        let next = doMoves(allMoves);//   .call(this, allMoves);
+        const allMoves = buildMoves(diskCount)
+        let next = doMoves(allMoves);
 
-        cache = wrap(next)
-
-        // boardRef.removeEventListener('transitionend', (e, n) => ddd(e, next), false)
-        //debugger
-        if (!boardRef.zzz) {
-            boardRef.addEventListener('transitionend', cache) //wrap(next))   //function xxx(e, n) { ddd(e, next) })// (e, n) => qqq.call(this, next, e))
-            // debugger
-            //  boardRef.removeEventListener('transitionend', x) //wrap(next))    //function zz(e, n) { ddd(next, e) })   // function xxx(e, n) { ddd(e, next) })
-            // debugger
-
-        }
-
-
-
+        transHandler = getTransHandler.call(this, next)
+        boardRef.addEventListener('transitionend', transHandler)
 
         this.continue = next;
-
         this.go = next;
         next();
     }
@@ -70,15 +64,12 @@ function Mover(boardRef, diskCount, disp) {
     }
 
     const doMoves = (moves) => {
-        let curr = 0;
-
-        let self = this;
-        function callback() {
-            if (self.currMove < moves.length) {
-                // if (curr < moves.length) {
-                changeDiskPlace(moves[self.currMove++])//, callback);
+        const callback = () => {
+            if (this.currMove < moves.length) {
+                changeDiskPlace(moves[this.currMove++])
             }
         }
+
         return callback;
     }
 
@@ -89,11 +80,12 @@ function Mover(boardRef, diskCount, disp) {
         let newNumRow = diskRefs.length - diskCount_ColTo //номер целевой строки
 
         let newLeft = (move.to - move.from) * (parseInt(getComputedStyle(boardRef).width) / 3) //целевые Left,Top координаты
-        let newTop = (newNumRow - diskRefs[move.disk - 1].style.gridRowStart) * 30
+        let newTop = (newNumRow - diskRefs[move.disk - 1].style.gridRowStart) * rowHeight //30px
 
         currDiskRef.style.zIndex = isNaN(parseInt(currDiskRef.style.zIndex)) ? 5
             : parseInt(currDiskRef.style.zIndex) + 1
 
+        //transitionend использует эти данные для перемешения диска в ячейку грида
         currDiskRef.dataset.rowStart = newNumRow;
         currDiskRef.dataset.colStart = move.to
         currDiskRef.dataset.rowEnd = newNumRow + 1;
@@ -103,52 +95,55 @@ function Mover(boardRef, diskCount, disp) {
         currDiskRef.style.transform = `translate(${newLeft}px,${newTop}px)`
     }
 
-    const handleTransitionEnd = (e, next, self) => {
-        e.target.style.transition = 'none'
-        e.target.style.transform = 'initial'
 
-        e.target.style.gridArea = `${e.target.dataset.rowStart}` +
-            `/${e.target.dataset.colStart}` +
-            `/${e.target.dataset.rowEnd}` +
-            `/${e.target.dataset.colEnd}`
+    /*
+ const handleTransitionEnd = (e, next, self) => {
+     e.target.style.transition = 'none'
+     e.target.style.transform = 'initial'
 
-        console.log('mover before dispatch')
-        disp({ type: Actions.DISKMOVED });
+     e.target.style.gridArea = `${e.target.dataset.rowStart}` +
+         `/${e.target.dataset.colStart}` +
+         `/${e.target.dataset.rowEnd}` +
+         `/${e.target.dataset.colEnd}`
 
-        if (!self.isPause) {
-            next();
-        }
-    }
+     console.log('mover before dispatch')
+     disp({ type: Actions.DISKMOVED });
 
-    /*this.test =*/ function test(e, next) {
+     if (!self.isPause) {
+         next();
+     }
+ }
 
-        e.target.style.transition = 'none'
-        e.target.style.transform = 'initial'
+ 
+ function test(e, next) {
+     e.target.style.transition = 'none'
+     e.target.style.transform = 'initial'
 
-        e.target.style.gridArea = `${e.target.dataset.rowStart}` +
-            `/${e.target.dataset.colStart}` +
-            `/${e.target.dataset.rowEnd}` +
-            `/${e.target.dataset.colEnd}`
+     e.target.style.gridArea = `${e.target.dataset.rowStart}` +
+         `/${e.target.dataset.colStart}` +
+         `/${e.target.dataset.rowEnd}` +
+         `/${e.target.dataset.colEnd}`
 
-        disp({ type: Actions.DISKMOVED });
+     disp({ type: Actions.DISKMOVED });
 
-        let in2col = Object.values(boardRef.children).filter(d => d.className.includes('disk') &&
-            d.style.gridColumnStart == 2).length
+     let in2col = Object.values(boardRef.children).filter(d => d.className.includes('disk') &&
+         d.style.gridColumnStart == 2).length
 
-        let disks = Object.values(boardRef.children).filter(d => d.className.includes('disk')).length
-        console.log('in2Col', in2col, disks)
-        //OK!!!
-        if (in2col >= disks) {
-            // let x = wrap(next)
-            //  alert(9)
-            boardRef.removeEventListener('transitionend', cache)
-            // debugger
-        } else {
-            //  if (!this.isPause) {
-            next()//.go() //next();
-            //  }
-        }
-    }
+     let disks = Object.values(boardRef.children).filter(d => d.className.includes('disk')).length
+     console.log('in2Col', in2col, disks)
+     //OK!!!
+     if (in2col >= disks) {
+         // let x = wrap(next)
+         //  alert(9)
+         boardRef.removeEventListener('transitionend', cache)
+         // debugger
+     } else {
+         //  if (!this.isPause) {
+         next()//.go() //next();
+         //  }
+     }
+ }
+ */
 
 }
 

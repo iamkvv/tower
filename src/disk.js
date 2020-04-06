@@ -16,7 +16,6 @@ const useStyles = makeStyles({
         width: props.width + '%',
         minWidth: props.width + '%',
         maxWidth: props.width + '%',
-        // gridArea: props.gridArea,
     })
 })
 
@@ -28,30 +27,19 @@ const Disk = (props) => {
     const currentRef = useRef();
 
     //https://github.com/facebook/react/issues/13029
-    function useCombinedRefs(...refs) {
+    function createRef(ref) {///  ...refs) {
         const targetRef = useRef();
 
-        useEffect(() => { //убрать цикл
-            refs.forEach(ref => {
-                if (!ref) return;
+        useEffect(() => {
+            if (!ref) return;
 
-                if (typeof ref === 'function') {
-                    ref(targetRef.current);
-
-                    currentRef.current = targetRef.current;//??
-
-                    // parentRef.current = Object.values(
-                    //     targetRef.current
-                    //         .parentNode.children)
-                    //     .filter(d => d.className.includes('disk'))
-                    //     .map(s => getComputedStyle(s));
-
-                } else {
-                    ref.current = targetRef.current;
-                }
-            });
-        }, []) //[refs]);
-
+            if (typeof ref === 'function') {
+                ref(targetRef.current);
+                currentRef.current = targetRef.current;//??
+            } else {
+                ref.current = targetRef.current;
+            }
+        }, []);
         return targetRef;
     }
 
@@ -68,14 +56,17 @@ const Disk = (props) => {
             let disksInCurrCol = props.board().filter(d => d.gridColumnStart === currCol);
             let minWidthInCol = Math.min(...disksInCurrCol.map(d => parseInt(d.width)))
 
-            if (parseInt(getComputedStyle(currentRef.current).width) === minWidthInCol) return true;
+            if (props.mode === 'manual' && !props.gameover)
+                if (parseInt(getComputedStyle(currentRef.current).width) === minWidthInCol) return true;
+                else
+                    return false
         },
         end: (item, monitor) => {
             //получаем {dropEffect: "move", dropRow: 3, dropCol: 2, sourceIdx: 0} т.е. на что изменить и кому
             let result = monitor.getDropResult()
 
             if (result) {
-                dispatch({ type: Actions.DISKMOVED });
+
 
                 currentRef.current.style.gridArea = `${result.dropRow}` +
                     `/${result.dropCol}` +
@@ -84,7 +75,10 @@ const Disk = (props) => {
 
                 let disksIn_2Column = props.board().filter(d => parseInt(d.gridColumnStart) === 2)
 
+                dispatch({ type: Actions.DISKMOVED });
+
                 if (props.board().length === disksIn_2Column.length) {
+                    dispatch({ type: Actions.GAMEOVER })
                     alert('OK')
                 }
                 // определить конец игры
@@ -92,15 +86,11 @@ const Disk = (props) => {
         }
     })
 
-    const ttt = (e) => {
-        console.log(props.boardTest(e));
-    }
     console.log('render Disk')
     return (
-        <div ref={useCombinedRefs(dragRef)}
+        <div ref={createRef(dragRef)}
             className={classes.disk}
             style={{ gridArea: props.gridArea }}
-            onClick={(e) => ttt(e)}
         >
             {props.idx}
         </div>

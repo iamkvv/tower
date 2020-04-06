@@ -3,6 +3,8 @@ export const ItemTypes = { DISK: 'disk' }
 export const Actions = {
     DISKCOUNT: 'DISK-COUNT',
     DISKMOVED: 'DISK-MOVED',
+    CHANGEMODE: 'CHANGE-MODE',
+    GAMEOVER: 'GAME-OVER',
     DISKREF: 'DISK-REF',
     BOARDREF: 'BOARD-REF',
     UPDATEDISK: 'UPDATE-DISK',
