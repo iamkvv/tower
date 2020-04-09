@@ -7,8 +7,23 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
     this.isPause = false;
     this.currMove = 0;
     this.onPauseMove = -1;
+
+    // this.continue = () => {
+    //     if (this.isPause) {
+    //         boardRef.removeEventListener('transitionend', transHandler)
+    //     }
+    //     this.go()
+    // } //   null
+
     this.continue = null
-    this.go = null
+    //    this.go = null
+
+    this.clearEventHandler = () => {
+        if (this.isPause) {
+            boardRef.removeEventListener('transitionend', transHandler)
+            //debugger
+        }
+    }
 
     let diskRefs = null;
     let transHandler = null
@@ -30,7 +45,6 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
 
             if (disksIn2Col >= diskCount) {
                 boardRef.removeEventListener('transitionend', transHandler)
-                console.log('GameOver')
                 disp({ type: Actions.GAMEOVER })
             } else {
                 if (!this.isPause) {
@@ -44,6 +58,7 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
 
     this.start = function () {
         this.currMove = 0
+
         //https://medium.com/@DavideRama/removeeventlistener-and-anonymous-functions-ab9dbabd3e7b
         diskRefs = Object.values(boardRef.children).filter(d => d.className.includes('disk'))
 
@@ -51,15 +66,17 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
         let next = doMoves(allMoves);
 
         transHandler = getTransHandler.call(this, next)
+
+        boardRef.removeEventListener('transitionend', transHandler)
+
         boardRef.addEventListener('transitionend', transHandler)
 
         this.continue = next;
-        this.go = next;
+        // this.go = next;
         next();
     }
 
     this.pause = function () {
-        // this.onPauseMove = this.currMove
         this.isPause = !this.isPause
     }
 

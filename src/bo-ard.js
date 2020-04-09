@@ -1,5 +1,8 @@
-import React, { forwardRef, useEffect } from 'react'
+import React, { forwardRef, useEffect, useRef } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
+
+
+
 import { renderDropCells, renderDisks, renderPegs } from './helper'
 
 const useStyles = makeStyles({
@@ -20,34 +23,45 @@ const useStyles = makeStyles({
 })
 
 function Board(props, ref) {
+
     const styleData = { diskCount: props.diskCount, rowHeight: props.rowHeight }
     const classes = useStyles(styleData);
+
+    console.log('Render Board', props)
+
 
     useEffect(() => {
         if (!ref.current) return
 
-        props.createMover()
-    }, [props.diskCount, props.gameNew])
+        if (props.mode === 'auto')
+            props.createMover()
+    }, [props.diskCount, props.gameNew, props.mode])
 
     const boardRef = () => {
         return Object.values(ref.current.children).filter(d => d.className.includes('disk'))
             .map(s => getComputedStyle(s));
     }
 
-    console.log(' Board render')
     return (
         <div className={classes.board}
             ref={ref}>
 
-            {renderDropCells(props.diskCount, () => boardRef())}
+            {
+                renderDropCells(props.diskCount, () => boardRef())
+            }
+            {
+                renderDisks(
+                    props.diskCount,
+                    props.mode,
+                    () => boardRef(),
+                )
+            }
+            {
+                renderPegs()
+            }
 
-            {renderDisks(
-                props.diskCount,
-                () => boardRef(),
-                props.mode,
-                props.gameOver)}
 
-            {renderPegs()}
+
         </div>
     )
 }

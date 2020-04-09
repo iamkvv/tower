@@ -17,11 +17,11 @@ export const buildMoves = (k) => { //строит массив ходов для
 
     return hanoi(k, 1, 2, 3)
         .map(d => ({ disk: parseInt(d[0]), from: d[1], to: d[2] }))
-};
+}
 
 
 let antimemo = 0;
-export const renderDisks = (qnt, board, mode, gameover) => {
+export const renderDisks = (qnt, mode, board) => {
     let disksData = [];
     // let colors = chroma.scale(['blue', 'yellow', 'violet', 'darkmagenta']).mode('lch').colors(qnt);
     let colors = chroma.scale([chroma.random(), 'yellow', 'violet', chroma.random()])
@@ -39,12 +39,10 @@ export const renderDisks = (qnt, board, mode, gameover) => {
                 idx={i}
                 key={'d' + i + antimemo}
                 board={board}
-                mode={mode}
-                gameover={gameover}
             />
         )
     }
-    return disksData;
+    return disksData
 }
 
 export const renderDropCells = (diskCount, board) => {
@@ -63,29 +61,9 @@ export const renderDropCells = (diskCount, board) => {
         })
 }
 
-
 export const renderPegs = () => {
     let pegNames = ['A', 'B', 'C']
     return pegNames.map((d, i) => {
-        return (<Peg key={'p_' + i} l={pegNames[i]} k={(i * 2) + 1} />)
+        return (<Peg key={'p_' + i} l={d} k={(i * 2) + 1} />)
     })
 }
-
-// export const renderDisks = (disks) => {
-//     return Object.keys(disks).map(id => (
-//         <Disk color={disks[id].color}
-//             width={disks[id].width}
-//             gridArea={`${disks[id].rowStart}/${disks[id].colStart}/${disks[id].rowEnd}/${disks[id].colEnd}`}
-//             idx={disks[id].idx}
-//             key={'d' + disks[id].idx}
-//         />
-//     ))
-// }
-
-// const dropCellStyle = makeStyles({
-//     ddcell: {
-//         gridArea: data => (`${data.row}/${data.col}/${data.row + 1}/${data.col + 1}`),
-//         width: '100%',
-//         height: '100%',
-//     }
-// })

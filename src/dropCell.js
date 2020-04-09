@@ -8,7 +8,7 @@ const useStyles = makeStyles({
         width: '100%',
         height: '100%',
         gridArea: `${props.row}/${props.col}/${props.row + 1}/${props.col + 1}`,
-        backgroundColor: props.isover ? '#aaffcc' : 'aqua'
+        backgroundColor: props.isover ? '#aaffcc' : 'aliceblue' //'aqua'
     })
 })
 

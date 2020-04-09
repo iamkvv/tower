@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Slider from '@material-ui/core/Slider';
@@ -9,143 +9,127 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
 
 import { Actions } from './constants'
-//import { GameContext } from './hanoi-tower'
-import { GameContext } from './gameLayout'    //'./gameProvider'
+
+import { GameContext } from './gameLayout' //'./gameProvider'
 import Timer from './timer'
 
 
-//alert(new Date(123 * 1000).toISOString().substr(11, 8))
-
-const useStyles = makeStyles(theme => ({
-    root: {
+const useStyles = makeStyles({
+    rt: {
+        display: 'flex',
+        flexDirection: 'column',
+        gridArea: props => props.matches ? '2/2/3/3' : '1/1/2/2',
+        backgroundColor: '#f8f8f8',
         width: 270,
         margin: '0 auto',
         fontFamily: 'Roboto, sans-serif',
         fontSize: '0.8rem',
         '& label, & button': { fontSize: '0.7rem' },
-        '& .MuiSvgIcon-root': { fontSize: '0.7rem' }, //{ width: '0.7em', height: '0.7em' },
+        '& .MuiSvgIcon-root': { fontSize: '0.7rem' },
         '& .MuiTypography-root': { fontSize: '12px' }
-    },
-    margin: {
-        height: theme.spacing(30),
-    },
-}));
+    }
+    // margin: { height: theme.spacing(130) },
+}
+
+);
 
 function Controls(props) {
     const dispatch = useContext(GameContext);
 
-    const classes = useStyles();
+    //const w = useRef(props.matches)
+    const classes = useStyles(props);
+
+    console.log('controls render', props)
+
+
 
     const onDiskCountChange = (e, val) => {
         if (val != props.diskCount)
             dispatch({ type: Actions.DISKCOUNT, diskcount: val })
-
     }
 
     const handleChangeMode = event => {
-        dispatch({ type: Actions.CHANGEMODE, mode: event.target.value })
-    };
-
-
-    // useEffect(() => {
-    //     //if (state.gameActive)
-    //     // startGame()
-
-    //     // dispatch({ type: 'START-GAME', startGame: sg })
-    // }, [state.gameActive]);//или []
+        props.changeMode(event.target.value)
+    }
 
     const onClickStart = () => {
-        props.go();
-
-        // dispatch({ type: Actions.GAMESTARTED });
-    }// startGame(); }
+        dispatch({ type: Actions.GAMESTARTED })
+        props.go()
+    }
 
     const onClickStop = () => {
-        // dispatch({ type: Actions.GAMESTOPPED });
+        dispatch({ type: Actions.GAMEPAUSED })
         props.pause()
     }
 
     const onClickNew = () => {
-        props.newgame();
-
-        // dispatch({ type: Actions.DISKCOUNT, diskcount: 0 })
-
-        // setTimeout(() => {
-        //  dispatch({ type: Actions.GAMENEW })
-        //     }, 200);
+        props.newgame()
+        // dispatch({ type: Actions.GAMENEW })
     }
 
-
-
-    const onClickTest = () => {
-        //dispatch({ type: Actions.GAMEACTIVE });
-        //  console.log(state.disks)
-        debugger
-    }// startGame(); }
-
-
-    console.log('controls render')
-    return (<div className='controls'>
-
-        <div className={classes.root}>
-            <h1>{props.moveCount}</h1>
+    return (
+        <div className={classes.rt} >
             <div>
-                <FormLabel>Режим игры</FormLabel>
-                <RadioGroup value={props.mode} onChange={handleChangeMode} row>
-                    <FormControlLabel value="auto" control={<Radio />} label="Авто" />
-                    <FormControlLabel value="manual" control={<Radio />} label="Ручной" />
+                <FormLabel>
+                    Режим игры
+                </FormLabel>
+                <RadioGroup value={props.mode}
+                    onChange={handleChangeMode}
+                    row>
+                    <FormControlLabel disabled={props.gameStarted}
+                        value="auto" control={<Radio />}
+                        label="Авто" />
+                    <FormControlLabel disabled={props.gameStarted}
+                        value="manual" control={<Radio />}
+                        label="Ручной" />
                 </RadioGroup>
             </div>
             <div>
-                <FormLabel>Количество дисков</FormLabel>
-                <Slider
+                <FormLabel>Количество дисков</FormLabel> <Slider disabled={props.gameStarted}
                     onChange={(e, val) => onDiskCountChange(e, val)}
-                    // defaultValue={props.diskCount} //{Object.values(disks).length}
                     value={props.diskCount}
-                    // getAriaValueText={() => props.diskCount} ///Object.values(disks).length}//{() => "Д"}
                     track={false}
                     aria-labelledby="discrete-slider"
                     valueLabelDisplay="auto"
                     step={1}
-                    marks
-                    min={1}
+                    marks min={1}
                     max={10}
                 />
             </div>
-
             <div className='buttons'>
-                {/* disabled={state.gameActive} */}
                 <Button
+                    disabled={props.gameStarted}
                     onClick={() => onClickStart()}
                     size="small" variant="contained" color="primary">
                     Играть
-            </Button>
-                <Button onClick={() => onClickStop()} size="small" variant="contained" color="primary">
-                    Остановить
-            </Button>
-                <Button onClick={() => onClickNew()} size="small" variant="contained" color="primary">
+                     </Button>
+                <Button disabled={!props.gameStarted || props.gameOver}
+                    onClick={() => onClickStop()}
+                    size="small" variant="contained" color="primary">
+                    {!props.gamePaused ? 'Остановить' : 'Продолжить'}
+                </Button>
+                <Button disabled={!props.gamePaused && !props.gameOver}
+                    onClick={() => onClickNew()}
+                    size="small"
+                    variant="contained"
+                    color="primary">
                     Новая игра
-            </Button>
+                    </Button>
+            </div>
+
+            <div>
+                {
+                    props.gameStarted && <Timer
+                        moveCount={props.moveCount}
+                        gamePaused={props.gamePaused}
+                        gameOver={props.gameOver}
+                        //?? gameNew={props.gameNew}
+                        gameStarted={props.gameStarted}
+                    />
+                }
             </div>
         </div>
-        {/* <p>
-            <input type="range" min="1" max="10"
-                value={Object.values(disks).length}
-                onChange={(e => onDiskCountChange(e))}
-            />
-        </p> */}
-        <p style={{ fontFamily: 'Roboto, sans-serif' }}>
-            <button onClick={() => onClickTest()}>
-                Test
-            </button>
-        </p>
-
-        <div>
-            {
-                <Timer />
-            }
-        </div>
-    </div>)
+    )
 }
 
 export default Controls

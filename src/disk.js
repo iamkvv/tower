@@ -16,16 +16,15 @@ const useStyles = makeStyles({
         width: props.width + '%',
         minWidth: props.width + '%',
         maxWidth: props.width + '%',
+
     })
 })
 
 const Disk = (props) => {
     const dispatch = useContext(GameContext);
-
     const classes = useStyles(props);
 
     const currentRef = useRef();
-
     //https://github.com/facebook/react/issues/13029
     function createRef(ref) {///  ...refs) {
         const targetRef = useRef();
@@ -56,18 +55,15 @@ const Disk = (props) => {
             let disksInCurrCol = props.board().filter(d => d.gridColumnStart === currCol);
             let minWidthInCol = Math.min(...disksInCurrCol.map(d => parseInt(d.width)))
 
-            if (props.mode === 'manual' && !props.gameover)
-                if (parseInt(getComputedStyle(currentRef.current).width) === minWidthInCol) return true;
-                else
-                    return false
+            if (parseInt(getComputedStyle(currentRef.current).width) === minWidthInCol) return true;
+            else
+                return false
         },
         end: (item, monitor) => {
             //получаем {dropEffect: "move", dropRow: 3, dropCol: 2, sourceIdx: 0} т.е. на что изменить и кому
             let result = monitor.getDropResult()
 
             if (result) {
-
-
                 currentRef.current.style.gridArea = `${result.dropRow}` +
                     `/${result.dropCol}` +
                     `/${result.dropRow + 1}` +
@@ -79,9 +75,7 @@ const Disk = (props) => {
 
                 if (props.board().length === disksIn_2Column.length) {
                     dispatch({ type: Actions.GAMEOVER })
-                    alert('OK')
                 }
-                // определить конец игры
             }
         }
     })

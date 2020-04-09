@@ -6,9 +6,9 @@ const useStyles = makeStyles({
     peg: props => ({
         position: 'absolute',
         height: props.h + 5,
-        width: 2,
+        width: 1,
         left: 100 * (props.k / 6) + '%',
-        backgroundColor: 'rgb(196, 166, 166)',
+        backgroundColor: '#e6dffb', //'darkturquoise',  // 'rgb(196, 166, 166)',
         bottom: 0,
         top: -5,
         textAlign: 'center',
