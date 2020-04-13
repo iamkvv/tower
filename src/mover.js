@@ -2,12 +2,12 @@ import { buildMoves } from './helper'
 import { Actions } from './constants'
 
 function Mover(boardRef, diskCount, rowHeight, disp) {
-    // this.boardRef = boardRef;
+    this.boardRef = boardRef;
     // this.diskCount = diskCount;
     this.isPause = false;
     this.currMove = 0;
     this.onPauseMove = -1;
-
+    // debugger
     // this.continue = () => {
     //     if (this.isPause) {
     //         boardRef.removeEventListener('transitionend', transHandler)
@@ -20,7 +20,7 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
 
     this.clearEventHandler = () => {
         if (this.isPause) {
-            boardRef.removeEventListener('transitionend', transHandler)
+            this.boardRef.removeEventListener('transitionend', transHandler)
             //debugger
         }
     }
@@ -44,7 +44,7 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
             let disksIn2Col = diskRefs.filter(d => parseInt(d.style.gridColumnStart) === 2).length;
 
             if (disksIn2Col >= diskCount) {
-                boardRef.removeEventListener('transitionend', transHandler)
+                this.boardRef.removeEventListener('transitionend', transHandler)
                 disp({ type: Actions.GAMEOVER })
             } else {
                 if (!this.isPause) {
@@ -60,16 +60,16 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
         this.currMove = 0
 
         //https://medium.com/@DavideRama/removeeventlistener-and-anonymous-functions-ab9dbabd3e7b
-        diskRefs = Object.values(boardRef.children).filter(d => d.className.includes('disk'))
+        diskRefs = Object.values(this.boardRef.children).filter(d => d.className.includes('disk'))
 
         const allMoves = buildMoves(diskCount)
         let next = doMoves(allMoves);
 
         transHandler = getTransHandler.call(this, next)
 
-        boardRef.removeEventListener('transitionend', transHandler)
+        this.boardRef.removeEventListener('transitionend', transHandler) //???
 
-        boardRef.addEventListener('transitionend', transHandler)
+        this.boardRef.addEventListener('transitionend', transHandler)
 
         this.continue = next;
         // this.go = next;
@@ -96,7 +96,7 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
         let diskCount_ColTo = diskRefs.filter(s => parseInt(s.style.gridColumnStart) === move.to).length //кол-во дисков на целевом столбце
         let newNumRow = diskRefs.length - diskCount_ColTo //номер целевой строки
 
-        let newLeft = (move.to - move.from) * (parseInt(getComputedStyle(boardRef).width) / 3) //целевые Left,Top координаты
+        let newLeft = (move.to - move.from) * (parseInt(getComputedStyle(this.boardRef).width) / 3) //целевые Left,Top координаты
         let newTop = (newNumRow - diskRefs[move.disk - 1].style.gridRowStart) * rowHeight //30px
 
         currDiskRef.style.zIndex = isNaN(parseInt(currDiskRef.style.zIndex)) ? 5

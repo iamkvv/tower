@@ -1,7 +1,5 @@
-import React, { forwardRef, useEffect, useRef } from 'react'
+import React, { forwardRef, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-
-
 
 import { renderDropCells, renderDisks, renderPegs } from './helper'
 
@@ -23,12 +21,9 @@ const useStyles = makeStyles({
 })
 
 function Board(props, ref) {
-
     const styleData = { diskCount: props.diskCount, rowHeight: props.rowHeight }
     const classes = useStyles(styleData);
-
-    console.log('Render Board', props)
-
+    //  console.log('Render Board', props)
 
     useEffect(() => {
         if (!ref.current) return
@@ -59,9 +54,6 @@ function Board(props, ref) {
             {
                 renderPegs()
             }
-
-
-
         </div>
     )
 }
