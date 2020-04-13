@@ -1,43 +1,46 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+/* @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
 .App-logo {
   max-height: 30vh;
   max-width: 30vh;
-}
+} */
 
-.MuiPaper-root {
-  /* left: calc(50% + 5px) !important; */
-  /* left: 50% !important; */
-  /* right: 33% !important; */
-  top: 75px !important;
-}
+/* .MuiPaper-root { */
+/* left: calc(50% + 5px) !important; */
+/* left: 50% !important; */
+/* right: 33% !important; */
+/*?? top: 75px !important; */
+/* } */
 
-.game {
+/* .game {
   font-family: Roboto, 'sans-serif';
   display: grid;
   align-items: start;
   grid-template-columns: auto;
   grid-template-rows: minmax(100px, auto) auto minmax(100px, auto);
+  background-color: #ffffff;
   border: 1px solid silver;
   width: 66%;
   max-width: 700px;
   min-width: 300px;
   margin: 50px auto 100px auto;
-}
+} */
 
-.controls {
+/* .controls {
   display: flex;
   flex-direction: column;
   grid-area: 2/2/3/3;
   background-color: #f8f8f8;
 }
 
-.buttons {
+*/
+/* .buttons {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
 
+*/
 /* .board {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;

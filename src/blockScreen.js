@@ -14,12 +14,8 @@ const useStyles = makeStyles({
     })
 })
 
-//Перенести это в Board!!!
-
 function BlockScreen(props) {
     console.log('Render Screen', props)
-    //??? if (!props.board.current) return;
-
     const classes = useStyles(props)
 
     return (

@@ -80,13 +80,12 @@ const Disk = (props) => {
         }
     })
 
-    console.log('render Disk')
     return (
         <div ref={createRef(dragRef)}
             className={classes.disk}
             style={{ gridArea: props.gridArea }}
         >
-            {props.idx}
+            {/* {props.idx} */}
         </div>
     )
 }

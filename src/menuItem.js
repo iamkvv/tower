@@ -1,20 +1,10 @@
 import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom'
 
-
-const TestMenu = (props) => {
-
-    console.log('TestMenu', props)
-
-    useEffect(() => {
-        var p = document.createElement("h1");
-        document.body.appendChild(p);
-    }, [])
-
-
+const MenuItem = (props) => {
+    console.log('MenuItem', props)
 
     return (
-        // <div style={{ color: 'blue' }}>
         <React.Fragment>
             {
                 ReactDOM.createPortal(
@@ -30,18 +20,14 @@ const TestMenu = (props) => {
                                 right: 0,
                                 visibility: props.anchorEl ? "visible" : "hidden"
                             }}>
-
                         </div>
                         {props.children}
                     </React.Fragment>
                     ,
                     document.body)
-
             }
         </React.Fragment>
-
-        // </div>
     )
 }
 
-export default TestMenu
+export default MenuItem

@@ -23,20 +23,30 @@ const Timer = (props) => {
     //Игра закончена - лишних ходов нет (3)
 
     return (
-        <div>
-            <table style={{ fontFamily: 'Roboto, sans-serif', margin: '0 auto' }}>
-                <tbody>
+
+        <table style={{ color: ' #328291', margin: '0 auto' }}>
+            <tbody>
+                <tr>
+                    <td>Moves:</td>
+                    <td>{props.moveCount} from {`${2 ** props.diskCount - 1}`}</td>
+                </tr>
+                <tr>
+                    <td>Time:</td>
+                    <td>{new Date(sec * 1000).toISOString().substr(14, 5)}</td>
+                </tr>
+                {props.gameOver &&
                     <tr>
-                        <td>Ходы:</td>
-                        <td>{props.moveCount}</td>
-                    </tr>
-                    <tr>
-                        <td>Время:</td>
-                        <td>{new Date(sec * 1000).toISOString().substr(14, 5)}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                        <td colSpan='2'
+                            style={{
+                                backgroundColor: '#fff', color: '#ff5722', borderTop: '1px solid red',
+                                padding: 5, letterSpacing: 5, fontSize: '18px'
+                            }}>
+                            Game over
+                        </td>
+                    </tr>}
+            </tbody>
+        </table>
+
     )
 }
 export default Timer

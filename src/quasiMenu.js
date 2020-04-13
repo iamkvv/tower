@@ -1,15 +1,14 @@
 import React, { useState } from 'react'
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+//import useMediaQuery from '@material-ui/core/useMediaQuery';
 
-import Menu from '@material-ui/core/Menu';
 import Controls from './controls'
-import TestMenu from './testMenu'
+import MenuItem from './menuItem'
 import useCurrentWidth from './useWidth'
 
 
-const GameMenu = (props) => {
+const QuasiMenu = (props) => {
     let width = useCurrentWidth();
 
     const [anchorEl, setAnchorEl] = useState(null);
@@ -25,24 +24,17 @@ const GameMenu = (props) => {
 
     console.log('GameMenu props.amover', anchorEl, props.amover)
 
-    const onClick = (e) => {
-        console.log(e)
-        debugger
-    }
-    //(e) => onClick(e)
     return (
         <div >
-
             <IconButton onClick={handleOpen}>
                 <MenuIcon color="primary" style={{ fontSize: 48 }} />
             </IconButton>
 
-            <TestMenu anchorEl={anchorEl} handleClose={handleClose}>
+            <MenuItem anchorEl={anchorEl} handleClose={handleClose}>
                 <Controls width={width} anchorEl={anchorEl} closeOnStart={handleClose} {...props} />
-            </TestMenu>
-
+            </MenuItem>
         </div>
     )
 }
 
-export default GameMenu
+export default QuasiMenu

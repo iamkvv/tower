@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 const getWidth = () => window.innerWidth
     || document.documentElement.clientWidth
     || document.body.clientWidth;
-
+//Thanks Vitalie Maldur 
 //https://dev.to/vitaliemaldur/resize-event-listener-using-react-hooks-1k0c
 function useCurrentWitdh() {
     // save current window width in the state object
