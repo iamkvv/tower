@@ -19,7 +19,6 @@ export const buildMoves = (k) => { //строит массив ходов для
         .map(d => ({ disk: parseInt(d[0]), from: d[1], to: d[2] }))
 }
 
-
 let antimemo = 0;
 export const renderDisks = (qnt, mode, board) => {
     let disksData = [];

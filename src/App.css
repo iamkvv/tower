@@ -1,9 +1,25 @@
+/* .App-logo {
+  position: absolute;
+  left: -32px;
+  top: -23px;
+  animation: App-logo-spin infinite 10s linear;
+  height: 45px;
+} */
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+
 /* @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
-.App-logo {
-  max-height: 30vh;
-  max-width: 30vh;
-} */
+*/
 
 /* .MuiPaper-root { */
 /* left: calc(50% + 5px) !important; */

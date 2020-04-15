@@ -1,19 +1,9 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles';
+import { dropcellStyles } from './styles'
 import { ItemTypes } from './constants';
 import { useDrop } from 'react-dnd'
 
-const useStyles = makeStyles({
-    dropcell: props => ({
-        width: '100%',
-        height: '100%',
-        gridArea: `${props.row}/${props.col}/${props.row + 1}/${props.col + 1}`,
-        backgroundColor: props.isover ? '#aaffcc' : 'aliceblue' //'aqua'
-    })
-})
-
 function DropCell(props) {
-
     const [{ isOver }, dropRef] = useDrop({
         accept: ItemTypes.DISK,
 
@@ -42,7 +32,7 @@ function DropCell(props) {
     })
 
     const styleData = { row: props.row, col: props.col, isover: isOver }
-    const classes = useStyles(styleData);
+    const classes = dropcellStyles(styleData);
 
     return (
         <div ref={dropRef}

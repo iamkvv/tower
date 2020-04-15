@@ -1,7 +1,7 @@
 {
-  "name": "render",
+  "name": "htower",
   "version": "1.0.0",
-  "description": "Describe render here",
+  "description": "hanoi tower app",
   "private": true,
   "scripts": {
     "build": "nwb build-react-app",
@@ -14,17 +14,16 @@
   "dependencies": {
     "@material-ui/core": "^4.9.5",
     "@material-ui/icons": "^4.9.1",
-    "animejs": "^3.1.0",
     "chroma-js": "^2.1.0",
-    "react": "^16.13.0",
+    "react": "^16.13.1",
     "react-dnd": "^10.0.2",
     "react-dnd-html5-backend": "^10.0.2",
-    "react-dom": "^16.13.0"
+    "react-dom": "^16.13.1"
   },
   "devDependencies": {
     "nwb": "0.23.x"
   },
-  "author": "",
+  "author": "iamkvv",
   "license": "MIT",
   "repository": ""
 }

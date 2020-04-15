@@ -1,32 +1,16 @@
 import React, { useRef, useEffect, useContext } from 'react'
-import { makeStyles } from '@material-ui/core/styles';
+import { diskStyles } from './styles'
 import { ItemTypes, Actions } from './constants';
-
 import { useDrag } from 'react-dnd';
 import { GameContext } from './gameLayout'
 
-const useStyles = makeStyles({
-    disk: props => ({
-        position: 'relative',
-        height: '94%',
-        border: '1px solid silver',
-        borderRadius: 5,
-        zIndex: 5,
-        backgroundColor: props.color,
-        width: props.width + '%',
-        minWidth: props.width + '%',
-        maxWidth: props.width + '%',
-
-    })
-})
-
 const Disk = (props) => {
     const dispatch = useContext(GameContext);
-    const classes = useStyles(props);
+    const classes = diskStyles(props);
 
     const currentRef = useRef();
     //https://github.com/facebook/react/issues/13029
-    function createRef(ref) {///  ...refs) {
+    function createRef(ref) {
         const targetRef = useRef();
 
         useEffect(() => {
@@ -45,7 +29,6 @@ const Disk = (props) => {
     const [{ }, dragRef] = useDrag({
         item: {
             type: ItemTypes.DISK,
-            //  gridArea: props.gridArea, //зачем??
             width: props.width,
             idx: props.idx,
         },

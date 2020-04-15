@@ -1,26 +1,6 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles';
+import { footerStyles } from './styles'
 import Timer from './timer'
-
-const useStyles = makeStyles({
-    footer: props => ({
-        gridArea: '3/1/4/2',
-        display: 'flex',
-        alignItems: 'center',
-        //height: '100%',
-        alignSelf: 'stretch',
-        borderTop: '1px solid silver',
-        width: 'auto',
-        backgroundColor: '#fafaf1',
-    }),
-    manual: {
-        margin: '0px 20px',
-        color: '#3b6769',
-
-        textAlign: "center",
-        fontSize: '0.9rem'
-    }
-})
 
 const Manual = (props) => {
     return (
@@ -34,8 +14,7 @@ const Manual = (props) => {
 }
 
 const Footer = (props) => {
-    const classes = useStyles(props);
-
+    const classes = footerStyles(props);
     return (
         <div className={classes.footer}>
             {!props.gameStarted ?

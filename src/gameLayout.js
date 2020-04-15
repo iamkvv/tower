@@ -1,7 +1,6 @@
 import React, { useReducer, useRef, useMemo, useCallback } from 'react'
 import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
-
 import { reducer, init } from './reducer'
 import { Actions } from './constants'
 import { layoutStyles } from './styles'
@@ -13,7 +12,6 @@ import QuasiMenu from './quasiMenu'
 import Footer from './footer';
 
 const GameContext = React.createContext();
-//!! https://html5book.ru/css3-transform/#transform
 
 const GameLayout = () => {
     const [state, dispatch] = useReducer(reducer, 2, init)
@@ -43,20 +41,13 @@ const GameLayout = () => {
         started={gameStarted}
     />, [diskCount, gameNew, mode])
 
-    // const mGameMenu = useMemo(() => <QuasiMenu
-    //     amover={state.amover}
-    //     {...state}
-    // />)
-
     return (
         <GameContext.Provider value={dispatch}>
             <div className={classes.game}>
                 <Header>
-                    {/* {mGameMenu} */}
                     <QuasiMenu
                         amover={state.amover}
-                        {...state}
-                    />
+                        {...state} />
                 </Header>
 
                 <DndProvider backend={Backend}>

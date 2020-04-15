@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'
+import { timerStyles } from './styles'
+
 const Timer = (props) => {
     console.log('Timer', props)
+
+    const classes = timerStyles(props)
     const [sec, setTime] = useState(0);
 
     useEffect(() => {
-        console.log('props.moveCount', props.moveCount)
         if (props.moveCount === 0) {
             setTime(0)
         }
@@ -18,13 +21,10 @@ const Timer = (props) => {
             console.log('clearInterval')
             clearInterval(id)
         };
-    }, [props.gamePaused, props.gameOver, props.gameStarted]) //props.gameNew,
-
-    //Игра закончена - лишних ходов нет (3)
+    }, [props.gamePaused, props.gameOver, props.gameStarted])
 
     return (
-
-        <table style={{ color: ' #328291', margin: '0 auto' }}>
+        <table className={classes.timer}>
             <tbody>
                 <tr>
                     <td>Moves:</td>
@@ -34,19 +34,16 @@ const Timer = (props) => {
                     <td>Time:</td>
                     <td>{new Date(sec * 1000).toISOString().substr(14, 5)}</td>
                 </tr>
+
                 {props.gameOver &&
                     <tr>
                         <td colSpan='2'
-                            style={{
-                                backgroundColor: '#fff', color: '#ff5722', borderTop: '1px solid red',
-                                padding: 5, letterSpacing: 5, fontSize: '18px'
-                            }}>
+                            className={classes.gameOver}>
                             Game over
                         </td>
                     </tr>}
             </tbody>
         </table>
-
     )
 }
 export default Timer

@@ -1,30 +1,10 @@
 import React, { forwardRef, useEffect } from 'react'
-import { makeStyles } from '@material-ui/core/styles';
 import { boardStyles } from './styles'
-
 import { renderDropCells, renderDisks, renderPegs } from './helper'
-
-/*
-const useStyles = makeStyles({
-    board: props => ({
-        position: 'relative',
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr 1fr',
-        gridTemplateRows: `repeat(${props.diskCount}, ${props.rowHeight}px)`,
-        gridArea: '2/1/3/2',
-        gridGap: 2,
-        justifyItems: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        boxShadow: '3px 3px 1px 0px #d4b8b8',
-        margin: '50px 20px 25px 20px'
-    })
-})
-*/
 
 function Board(props, ref) {
     const styleData = { diskCount: props.diskCount, rowHeight: props.rowHeight }
-    const classes = boardStyles(styleData)  // useStyles(styleData);
+    const classes = boardStyles(styleData)
 
     useEffect(() => {
         if (!ref.current) return
