@@ -15,7 +15,9 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
         }
     }
 
-    let diskRefs = null;
+    //let diskRefs = null;
+    this.diskRefs = null;
+
     let transHandler = null
 
     function getTransHandler(nxt) {
@@ -29,8 +31,10 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
                 `/${e.target.dataset.colEnd}`
 
             disp({ type: Actions.DISKMOVED });
+            //!!
+            let disksIn2Col = this.diskRefs.filter(d => parseInt(d.style.gridColumnStart) === 2).length;
 
-            let disksIn2Col = diskRefs.filter(d => parseInt(d.style.gridColumnStart) === 2).length;
+
 
             if (disksIn2Col >= diskCount) {
                 this.boardRef.removeEventListener('transitionend', transHandler)
@@ -48,7 +52,7 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
         this.currMove = 0
 
         //https://medium.com/@DavideRama/removeeventlistener-and-anonymous-functions-ab9dbabd3e7b
-        diskRefs = Object.values(this.boardRef.children).filter(d => d.className.includes('disk'))
+        this.diskRefs = Object.values(this.boardRef.children).filter(d => d.dataset.disk === "true")
 
         const allMoves = buildMoves(diskCount)
         let next = doMoves(allMoves);
@@ -78,13 +82,14 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
     }
 
     const changeDiskPlace = (move) => {
-        let currDiskRef = diskRefs[move.disk - 1]; //ref текущего диска
+        let currDiskRef = this.diskRefs[move.disk - 1]; //ref текущего диска
 
-        let diskCount_ColTo = diskRefs.filter(s => parseInt(s.style.gridColumnStart) === move.to).length //кол-во дисков на целевом столбце
-        let newNumRow = diskRefs.length - diskCount_ColTo //номер целевой строки
+        let diskCount_ColTo = this.diskRefs.filter(s => parseInt(s.style.gridColumnStart) === move.to).length //кол-во дисков на целевом столбце
+        let newNumRow = this.diskRefs.length - diskCount_ColTo //номер целевой строки
 
         let newLeft = (move.to - move.from) * (parseInt(getComputedStyle(this.boardRef).width) / 3) //целевые Left,Top координаты
-        let newTop = (newNumRow - diskRefs[move.disk - 1].style.gridRowStart) * rowHeight
+
+        let newTop = (newNumRow - this.diskRefs[move.disk - 1].style.gridRowStart) * rowHeight
 
         currDiskRef.style.zIndex = isNaN(parseInt(currDiskRef.style.zIndex)) ? 5
             : parseInt(currDiskRef.style.zIndex) + 1

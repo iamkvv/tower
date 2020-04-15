@@ -14,7 +14,7 @@ function Board(props, ref) {
     }, [props.diskCount, props.gameNew, props.mode])
 
     const boardRef = () => {
-        return Object.values(ref.current.children).filter(d => d.className.includes('disk'))
+        return Object.values(ref.current.children).filter(d => d.dataset.disk === 'true')//  d.className.includes('disk'))
             .map(s => getComputedStyle(s));
     }
 

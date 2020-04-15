@@ -67,6 +67,7 @@ const Disk = (props) => {
         <div ref={createRef(dragRef)}
             className={classes.disk}
             style={{ gridArea: props.gridArea }}
+            data-disk={true}
         >
             {/* {props.idx} */}
         </div>

@@ -1,9 +1,12 @@
 {
-  "name": "htower",
+  "name": "tower",
+  "homepage": "http://iamkvv.github.io/tower",
   "version": "1.0.0",
   "description": "hanoi tower app",
   "private": true,
   "scripts": {
+    "predeploy": "nwb build-react-app",
+    "deploy": "gh-pages -d dist",
     "build": "nwb build-react-app",
     "clean": "nwb clean-app",
     "start": "nwb serve-react-app",
@@ -21,6 +24,7 @@
     "react-dom": "^16.13.1"
   },
   "devDependencies": {
+    "gh-pages": "^2.2.0",
     "nwb": "0.23.x"
   },
   "author": "iamkvv",

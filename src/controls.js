@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useEffect, forwardRef } from 'react'
+import React, { useContext } from 'react'
 import { controlStyles } from './styles'
 
 import Button from '@material-ui/core/Button';
