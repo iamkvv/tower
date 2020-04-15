@@ -17,8 +17,6 @@ const QuasiMenu = (props) => {
         setAnchorEl(null);
     };
 
-    console.log('GameMenu props.amover', anchorEl, props.amover)
-
     return (
         <div >
             <IconButton onClick={handleOpen}>

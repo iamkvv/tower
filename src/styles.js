@@ -1,5 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles'
-
+//--------------------
+const maxWidth = 400
 const layoutStyles = makeStyles({
     game: {
         fontFamily: 'Roboto, sans-serif',
@@ -10,12 +11,17 @@ const layoutStyles = makeStyles({
         backgroundColor: '#ffffff',
         border: '1px solid silver',
         width: '66%',
+        // [theme.breakpoints.up('md')]: { backgroundColor: 'green' },
         maxWidth: '700px',
         minWidth: '300px',
         margin: '50px auto 100px auto',
+
+        [`@media (max-width: ${maxWidth}px)`]: {
+            width: '95%'
+        }
     }
 })
-
+//--------------------
 const AppLogoSpin = "AppLogoSpin";
 
 const headerStyles = makeStyles({
@@ -31,14 +37,20 @@ const headerStyles = makeStyles({
         fontSize: 40,
         fontWeight: 100,
         backgroundColor: '#fafaf1',
-        color: '#4eaaaa'
+        color: '#4eaaaa',
+        [`@media (max-width: 600px)`]: {
+            alignItems: 'center'
+        }
     },
     caption: {
         marginRight: '15px',
         letterSpacing: 5,
         fontFamily: 'Stylish, sans-serif',
         lineHeight: '30px',
-        textShadow: '1px 1px 2px black'
+        textShadow: '1px 1px 2px black',
+        [`@media (max-width: ${maxWidth}px)`]: {
+            letterSpacing: '1px'
+        }
     },
     menuWrapper: {
         marginLeft: 15
@@ -50,13 +62,26 @@ const headerStyles = makeStyles({
         animation: `$${AppLogoSpin} infinite 7s linear`,
         height: '45px'
     },
-    "@keyframes AppLogoSpin": {
+    [`@keyframes ${AppLogoSpin}`]: {
         from: { transform: "rotate(0deg)" },
         to: { transform: "rotate(360deg)" }
     }
     //https://codesandbox.io/s/m4zy6v09wj?file=/src/fade.js:194-221
 })
 
+const menuStyles = makeStyles({
+    menuSwitcher: props => ({
+        position: 'fixed',
+        zIndex: 1500,
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        visibility: props.anchorEl ? "visible" : "hidden"
+    })
+})
+
+//--------------------
 const boardStyles = makeStyles({
     board: props => ({
         position: 'relative',
@@ -72,7 +97,7 @@ const boardStyles = makeStyles({
         margin: '50px 20px 25px 20px'
     })
 })
-
+//--------------------
 const diskStyles = makeStyles({
     disk: props => ({
         position: 'relative',
@@ -86,7 +111,7 @@ const diskStyles = makeStyles({
         maxWidth: props.width + '%',
     })
 })
-
+//--------------------
 const dropcellStyles = makeStyles({
     dropcell: props => ({
         width: '100%',
@@ -95,7 +120,7 @@ const dropcellStyles = makeStyles({
         backgroundColor: props.isover ? '#aaffcc' : 'aliceblue' //'aqua'
     })
 })
-
+//--------------------
 const footerStyles = makeStyles({
     footer: props => ({
         gridArea: '3/1/4/2',
@@ -106,7 +131,6 @@ const footerStyles = makeStyles({
         width: 'auto',
         backgroundColor: '#fafaf1',
     }),
-
     manual: {
         margin: '0px 20px',
         color: '#3b6769',
@@ -114,7 +138,7 @@ const footerStyles = makeStyles({
         fontSize: '1rem'
     }
 })
-
+//--------------------
 const controlStyles = makeStyles({
     controls: {
         position: "absolute",
@@ -140,7 +164,6 @@ const controlStyles = makeStyles({
         '& .MuiSvgIcon-root': { fontSize: '0.7rem' },
         '& .MuiTypography-root': { fontSize: '12px' }
     },
-
     buttons: {
         display: 'flex',
         flexDirection: 'row',
@@ -151,30 +174,23 @@ const controlStyles = makeStyles({
 
 const calcControlPos = (anchor, winWidth) => {
     if (winWidth >= 1000) {
-        //debugger
         //return (100 * (anchor.offsetLeft + 20)) / winWidth + '%'
-
         return (100 * (anchor.getBoundingClientRect().x + 20)) / winWidth + '%'
-
     }
-
     else if (winWidth < 1000 && winWidth >= 600) {
-        //return (100 * (anchor.offsetLeft - 330 + 0 + 52)) / winWidth + '%'
+        //return (100 * (anchor.offsetLeft - 330 +  52)) / winWidth + '%'
         return (100 * (anchor.getBoundingClientRect().x - 330 + 52)) / winWidth + '%'
-
     }
-
     else if (winWidth < 600) {
         return (winWidth / 2 - 330 / 2) + 'px'
     }
 }
-
+//--------------------
 const timerStyles = makeStyles({
     timer: {
         color: ' #328291',
         margin: '0 auto'
     },
-
     gameOver: {
         backgroundColor: '#fff',
         color: '#ff5722',
@@ -184,14 +200,29 @@ const timerStyles = makeStyles({
         fontSize: '18px'
     }
 })
+//--------------------
+const blockerStyles = makeStyles({
+    manualblock: props => ({
+        display: props.mode === 'auto' || !props.gameStarted || props.gameOver || props.gamePaused ? 'flex' : 'none',
+        gridArea: '2/1/3/2',
+        pointerEvents: 'bounding-box', //'none' допускает DnD под этим div'ом,
+        backgroundColor: 'transparent',
+        zIndex: 1100,
+        width: '100%',
+        height: '100%'
+    })
+})
+//--------------------
 
 export {
     layoutStyles,
     headerStyles,
+    menuStyles,
     boardStyles,
     diskStyles,
     dropcellStyles,
     footerStyles,
     controlStyles,
-    timerStyles
+    timerStyles,
+    blockerStyles
 }

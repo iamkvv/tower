@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { timerStyles } from './styles'
 
 const Timer = (props) => {
-    console.log('Timer', props)
-
     const classes = timerStyles(props)
     const [sec, setTime] = useState(0);
 
@@ -18,7 +16,6 @@ const Timer = (props) => {
         }, 1000);
 
         return () => {
-            console.log('clearInterval')
             clearInterval(id)
         };
     }, [props.gamePaused, props.gameOver, props.gameStarted])

@@ -14,8 +14,6 @@ function Controls(props) {
     const dispatch = useContext(GameContext)
     const classes = controlStyles(props)
 
-    console.log('Controls', props, classes)
-
     const onDiskCountChange = (e, val) => {
         if (val != props.diskCount)
             dispatch({ type: Actions.DISKCOUNT, diskcount: val })

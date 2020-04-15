@@ -3,25 +3,15 @@ import { Actions } from './constants'
 
 function Mover(boardRef, diskCount, rowHeight, disp) {
     this.boardRef = boardRef;
-    // this.diskCount = diskCount;
     this.isPause = false;
     this.currMove = 0;
     this.onPauseMove = -1;
-    // debugger
-    // this.continue = () => {
-    //     if (this.isPause) {
-    //         boardRef.removeEventListener('transitionend', transHandler)
-    //     }
-    //     this.go()
-    // } //   null
 
     this.continue = null
-    //    this.go = null
 
     this.clearEventHandler = () => {
         if (this.isPause) {
             this.boardRef.removeEventListener('transitionend', transHandler)
-            //debugger
         }
     }
 
@@ -29,7 +19,6 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
     let transHandler = null
 
     function getTransHandler(nxt) {
-
         const transEnd = (e) => {
             e.target.style.transition = 'none'
             e.target.style.transform = 'initial'
@@ -52,7 +41,6 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
                 }
             }
         }
-
         return transEnd
     }
 
@@ -67,12 +55,11 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
 
         transHandler = getTransHandler.call(this, next)
 
-        this.boardRef.removeEventListener('transitionend', transHandler) //???
+        // this.boardRef.removeEventListener('transitionend', transHandler) //???
 
         this.boardRef.addEventListener('transitionend', transHandler)
-
         this.continue = next;
-        // this.go = next;
+
         next();
     }
 
@@ -97,7 +84,7 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
         let newNumRow = diskRefs.length - diskCount_ColTo //номер целевой строки
 
         let newLeft = (move.to - move.from) * (parseInt(getComputedStyle(this.boardRef).width) / 3) //целевые Left,Top координаты
-        let newTop = (newNumRow - diskRefs[move.disk - 1].style.gridRowStart) * rowHeight //30px
+        let newTop = (newNumRow - diskRefs[move.disk - 1].style.gridRowStart) * rowHeight
 
         currDiskRef.style.zIndex = isNaN(parseInt(currDiskRef.style.zIndex)) ? 5
             : parseInt(currDiskRef.style.zIndex) + 1
@@ -111,57 +98,6 @@ function Mover(boardRef, diskCount, rowHeight, disp) {
         currDiskRef.style.transition = 'transform 1s ease-out'
         currDiskRef.style.transform = `translate(${newLeft}px,${newTop}px)`
     }
-
-
-    /*
- const handleTransitionEnd = (e, next, self) => {
-     e.target.style.transition = 'none'
-     e.target.style.transform = 'initial'
-
-     e.target.style.gridArea = `${e.target.dataset.rowStart}` +
-         `/${e.target.dataset.colStart}` +
-         `/${e.target.dataset.rowEnd}` +
-         `/${e.target.dataset.colEnd}`
-
-     console.log('mover before dispatch')
-     disp({ type: Actions.DISKMOVED });
-
-     if (!self.isPause) {
-         next();
-     }
- }
-
- 
- function test(e, next) {
-     e.target.style.transition = 'none'
-     e.target.style.transform = 'initial'
-
-     e.target.style.gridArea = `${e.target.dataset.rowStart}` +
-         `/${e.target.dataset.colStart}` +
-         `/${e.target.dataset.rowEnd}` +
-         `/${e.target.dataset.colEnd}`
-
-     disp({ type: Actions.DISKMOVED });
-
-     let in2col = Object.values(boardRef.children).filter(d => d.className.includes('disk') &&
-         d.style.gridColumnStart == 2).length
-
-     let disks = Object.values(boardRef.children).filter(d => d.className.includes('disk')).length
-     console.log('in2Col', in2col, disks)
-     //OK!!!
-     if (in2col >= disks) {
-         // let x = wrap(next)
-         //  alert(9)
-         boardRef.removeEventListener('transitionend', cache)
-         // debugger
-     } else {
-         //  if (!this.isPause) {
-         next()//.go() //next();
-         //  }
-     }
- }
- */
-
 }
 
 export default Mover

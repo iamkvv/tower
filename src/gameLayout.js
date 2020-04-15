@@ -27,10 +27,10 @@ const GameLayout = () => {
         [diskCount, gameNew]
     );
 
-    const mBlockScreen = useMemo(() => <BlockScreen
+    const mManualBlocker = useMemo(() => <BlockScreen
         board={board_Ref}
         {...state}
-    />, [board_Ref, gameOver, gameStarted, gamePaused, mode, diskCount])
+    />, [gameOver, gameStarted, gamePaused, mode])
 
     const mBoard = useMemo(() => <Board
         ref={board_Ref}
@@ -54,7 +54,7 @@ const GameLayout = () => {
                     {mBoard}
                 </DndProvider>
 
-                {mBlockScreen}
+                {mManualBlocker}
 
                 <Footer {...state} />
             </div>
